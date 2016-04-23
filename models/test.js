@@ -66,10 +66,19 @@ CommentSchema.plugin(sanitizerPlugin);
 
 var TestSchema = new Schema(
     {
-        image: {type: String, required: true},
+        image: {
+            type: String,
+            required: true,
+            validate: {
+                validator: function (url) {
+                    return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+                },
+                message: 'Please input a valid image link'
+            }
+        },
         postedBy: {type: String, required: true},
         description: {type: String, required: true},
-        category: {type: String, default: "DEFAULT"},
+        category: {type: String, default: "None"},
         title: {type: String, required: true},
         rating: {type: Number, default: 5},
         results: [ResultSchema],

@@ -10,6 +10,10 @@ var Tests = require('../models/test');
 var testrouter = express.Router();
 testrouter.use(bodyParser.json());
 
+function first(obj){
+    for (var j in obj) return obj[j];
+}
+
 /* GET users listing. */
 testrouter.route('/')
     .get(function (req, res, next) {
@@ -19,7 +23,7 @@ testrouter.route('/')
             .exec(function (err, noticia) {
                 if (err) {
                     res.json({
-                        message: err.errors.title.message
+                        message: first(err.errors).message
                         // ,error: err
                     })
                 }
@@ -30,8 +34,9 @@ testrouter.route('/')
         console.log('Trying to post a new test');
         Tests.create(req.body, function (err, noticia) {
             if (err) {
+                // console.log(err);
                 res.json({
-                    message: err.errors.title.message
+                    message: first(err.errors).message
                     // ,error: err
                 })
             }
@@ -44,7 +49,7 @@ testrouter.route('/')
         Tests.remove({}, function (err, noticia) {
             if (err) {
                 res.json({
-                    message: err.errors.title.message
+                    message: first(err.errors).message
                     // ,error: err
                 })
             }
@@ -59,7 +64,7 @@ testrouter.route('/:testId')
             .exec(function (err, dish) {
                 if (err) {
                     res.json({
-                        message: err.errors.title.message
+                        message: first(err.errors).message
                         // ,error: err
                     })
                 }
@@ -75,7 +80,7 @@ testrouter.route('/:testId')
         }, function (err, dish) {
             if (err) {
                 res.json({
-                    message: err.errors.title.message
+                    message: first(err.errors).message
                     // ,error: err
                 })
             }
@@ -87,7 +92,7 @@ testrouter.route('/:testId')
         Tests.findByIdAndRemove(req.params.testId, function (err, resp) {
             if (err) {
                 res.json({
-                    message: err.errors.title.message
+                    message: first(err.errors).message
                     // ,error: err
                 })
             }
