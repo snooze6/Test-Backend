@@ -14,7 +14,8 @@ newsrouter.use(bodyParser.json());
 newsrouter.route('/')
     .get(function (req, res, next) {
         console.log('Trying to get news');
-        News.find({})
+        // Hide comments here
+        News.find({},{"comments":0})
             .exec(function (err, noticia) {
                 if (err) {
                     res.json({
@@ -48,6 +49,49 @@ newsrouter.route('/')
                 })
             }
             res.json(noticia);
+        });
+    });
+
+newsrouter.route('/:newId')
+    .get(function (req, res, next) {
+        News.findById(req.params.newId)
+            .populate('comments.postedBy')
+            .exec(function (err, dish) {
+                if (err) {
+                    res.json({
+                        message: err.errors.title.message
+                        // ,error: err
+                    })
+                }
+                res.json(dish);
+            });
+    })
+
+    .put(function (req, res, next) {
+        News.findByIdAndUpdate(req.params.newId, {
+            $set: req.body
+        }, {
+            new: true
+        }, function (err, dish) {
+            if (err) {
+                res.json({
+                    message: err.errors.title.message
+                    // ,error: err
+                })
+            }
+            res.json(dish);
+        });
+    })
+
+    .delete(function (req, res, next) {
+        News.findByIdAndRemove(req.params.newId, function (err, resp) {
+            if (err) {
+                res.json({
+                    message: err.errors.title.message
+                    // ,error: err
+                })
+            }
+            res.json(resp);
         });
     });
 

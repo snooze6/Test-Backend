@@ -25,7 +25,8 @@ var commentSchema = new Schema({
         required: true
     }
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 commentSchema.plugin(sanitizerPlugin);
 
@@ -46,7 +47,8 @@ var newSchema = new Schema({
     // Sub document -> WOW
     comments:[commentSchema]
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 newSchema.plugin(sanitizerPlugin);
 
