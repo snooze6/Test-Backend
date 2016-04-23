@@ -7,8 +7,32 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var news = require('./routes/news');
+
+var config = require('./config');
+
+// ---------------------------------------------------------------------
+
+var mongoose = require('mongoose');
+mongoose.connect(config.mongoUrl);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+  // we're connected!
+  console.log("Connected correctly to server");
+});
 
 var app = express();
+
+console.log('< STARTING>');
+console.log('THIS:         ' + config.this);
+console.log('DATABASE_URI: ' + config.mongoUrl);
+console.log('APP_SECRET:   ' + config.secretKey);
+console.log('PORT:         ' + config.port);
+console.log('FCLIENT_KEY:  ' + config.facebook.clientID);
+console.log('FCLIENT_SEC:  ' + config.facebook.clientSecret);
+console.log('FCALLBACK:    ' + config.facebook.callbackURL);
+console.log('</STARTING>');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +47,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+app.use(config.api+'/users', users);
+app.use(config.api+'/News', news);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,14 @@
+npm install mongoose --save
+
+# RUN
+mongod --dbpath database
+
+# TODO
+- Extract variables to config for easier deployment
+- Save and Access tests
+- Control XSS in test fields
+- Don't bring comments in listing
+- Paginate in listin
+- Access individual tests
+- Access individual comments
+- Facebook integration
