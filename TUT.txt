@@ -1,5 +1,7 @@
 npm install mongoose --save
 npm install mongoose-sanitizer --save
+npm install mongoose-paginate --save
+npm install mongoose-search-plugin --save
 
 
 # RUN
