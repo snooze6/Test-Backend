@@ -4,7 +4,6 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
 
 var News = require('../models/new');
 
@@ -26,7 +25,6 @@ newsrouter.route('/')
                 res.json(noticia);
             });
     })
-
     .post(function (req, res, next) {
         console.log('Trying to post a new');
         News.create(req.body, function (err, noticia) {
@@ -40,7 +38,6 @@ newsrouter.route('/')
             res.json(noticia);
         });
     })
-
     .delete(function (req, res, next) {
         console.log('Trying to delete all news');
         News.remove({}, function (err, noticia) {

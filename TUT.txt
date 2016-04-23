@@ -1,4 +1,6 @@
 npm install mongoose --save
+npm install mongoose-sanitizer --save
+
 
 # RUN
 mongod --dbpath database
