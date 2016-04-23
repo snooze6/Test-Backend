@@ -7,6 +7,76 @@ var paginate = require('mongoose-paginate');
 var searchplugin = require('mongoose-search-plugin');
 //var autoincrement = require('mongoose-auto-increment');
 
+var ResultSchema = new mongoose.Schema(
+    {
+        description: { type: String, required:true },
+        URLPhoto: String,
+        title: { type: String, required: true }
+        /*
+         * MongoDB arrays keep their order so by adding an
+         * id you're only creating more data
+         */
+        //id: { type: Number, required: true, unique: true}
+    }, {
+        versionKey: false
+    }
+);
+
+var OptionsSchema = new mongoose.Schema(
+    {
+        question: { type: String, required:true},
+        URLPhoto: String,
+        options:
+            [
+                {
+                    //result: {
+                    //    description: String,
+                    //    idResult: String,
+                    //    URLPhoto:    String,
+                    //    title:      String,
+                    //    id: Number,
+                    //},
+                    id_result: {type: Number, min: 0, required:true
+                        //validate: {
+                        //    validator: function(v){
+                        //        console.log('-- Trying to validate');
+                        //        return v<this.results.length;
+                        //    },
+                        //    message: 'Cannot validate'
+                        //}
+                    },
+                    title: { type: String, required: true},
+                    URLPhoto: String,
+                    selected: {type: Boolean, default: false}
+                }
+            ]
+    }, {
+        versionKey: false
+    }
+);
+
+
+var CommentSchema = new Schema({
+    rating:  {
+        type: Number,
+        min: 1,
+        max: 5,
+        required: true
+    },
+    comment:  {
+        type: String,
+        required: true
+    },
+    postedBy: {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true,
+    versionKey: false
+});
+CommentSchema.plugin(sanitizerPlugin);
+
 var TestSchema = new mongoose.Schema(
     {
         URLPhoto: String,
@@ -15,50 +85,9 @@ var TestSchema = new mongoose.Schema(
         category: {type: String, default: "DEFAULT"},
         title: {type: String, required: true},
         rating: {type: Number, default: 0},
-        results:
-            [
-                {
-                    description: { type: String, required:true },
-                    URLPhoto: String,
-                    title: { type: String, required: true }
-                    /*
-                     * MongoDB arrays keep their order so by adding an
-                     * id you're only creating more data
-                     */
-                    //id: { type: Number, required: true, unique: true}
-                }
-            ],
-        questions:
-            [
-                {
-                    question: { type: String, required:true},
-                    URLPhoto: String,
-                    options:
-                        [
-                            {
-                                //result: {
-                                //    description: String,
-                                //    idResult: String,
-                                //    URLPhoto:    String,
-                                //    title:      String,
-                                //    id: Number,
-                                //},
-                                id_result: {type: Number, min: 0, required:true
-                                    //validate: {
-                                    //    validator: function(v){
-                                    //        console.log('-- Trying to validate');
-                                    //        return v<this.results.length;
-                                    //    },
-                                    //    message: 'Cannot validate'
-                                    //}
-                                },
-                                title: { type: String, required: true},
-                                URLPhoto: String,
-                                selected: {type: Boolean, default: false}
-                            }
-                        ]
-                }
-            ]
+        results: [ResultSchema],
+        questions: [OptionsSchema],
+        comments: [CommentSchema]
     }
 );
 TestSchema.plugin(paginate);
@@ -66,10 +95,10 @@ TestSchema.plugin(searchplugin, {
     fields: ['user', 'description', 'category']
 });
 TestSchema.index({ user:'text', rating:'text', category:'text'});
-TestSchema.path('questions').validate(function(value,done){
+TestSchema.path('questions').validate(function(value, done){
     console.log('--Intentaré validar');
 
-    var q
+    var q;
     for (var i=0; i < this.questions.length; i++){
         q = this.questions[i];
         for (var j=0; j< q.options.length; j++){
