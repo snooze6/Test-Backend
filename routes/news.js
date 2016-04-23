@@ -27,7 +27,7 @@ newsrouter.route('/')
             });
     })
     .post(function (req, res, next) {
-        console.log('Trying to post a new');
+        console.log('Trying to post a new notice');
         News.create(req.body, function (err, noticia) {
             if (err) {
                 res.json({

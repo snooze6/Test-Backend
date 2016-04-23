@@ -3,57 +3,44 @@
  */
 
 var mongoose = require('mongoose');
-var paginate = require('mongoose-paginate');
-var searchplugin = require('mongoose-search-plugin');
-//var autoincrement = require('mongoose-auto-increment');
+// var paginate = require('mongoose-paginate');
+// var searchplugin = require('mongoose-search-plugin');
+// var autoincrement = require('mongoose-auto-increment');
+var sanitizerPlugin = require('mongoose-sanitizer');
+var Schema = mongoose.Schema;
 
 var ResultSchema = new mongoose.Schema(
     {
         description: { type: String, required:true },
-        URLPhoto: String,
+        image: String,
         title: { type: String, required: true }
-        /*
-         * MongoDB arrays keep their order so by adding an
-         * id you're only creating more data
-         */
-        //id: { type: Number, required: true, unique: true}
     }, {
         versionKey: false
     }
 );
+ResultSchema.plugin(sanitizerPlugin);
 
-var OptionsSchema = new mongoose.Schema(
+var OptionsSchema = new Schema(
+    {
+        result: { type: Number, min: 0, required:true },
+        title: { type: String, required: true},
+        image: String
+    }, {
+        versionKey: false
+    }
+);
+OptionsSchema.plugin(sanitizerPlugin);
+
+var QuestionSchema = new Schema(
     {
         question: { type: String, required:true},
-        URLPhoto: String,
-        options:
-            [
-                {
-                    //result: {
-                    //    description: String,
-                    //    idResult: String,
-                    //    URLPhoto:    String,
-                    //    title:      String,
-                    //    id: Number,
-                    //},
-                    id_result: {type: Number, min: 0, required:true
-                        //validate: {
-                        //    validator: function(v){
-                        //        console.log('-- Trying to validate');
-                        //        return v<this.results.length;
-                        //    },
-                        //    message: 'Cannot validate'
-                        //}
-                    },
-                    title: { type: String, required: true},
-                    URLPhoto: String,
-                    selected: {type: Boolean, default: false}
-                }
-            ]
+        image: String,
+        options: [OptionsSchema]
     }, {
         versionKey: false
     }
 );
+QuestionSchema.plugin(sanitizerPlugin);
 
 
 var CommentSchema = new Schema({
@@ -77,45 +64,50 @@ var CommentSchema = new Schema({
 });
 CommentSchema.plugin(sanitizerPlugin);
 
-var TestSchema = new mongoose.Schema(
+var TestSchema = new Schema(
     {
-        URLPhoto: String,
-        user: String,
-        description: String,
+        image: {type: String, required: true},
+        postedBy: {type: String, required: true},
+        description: {type: String, required: true},
         category: {type: String, default: "DEFAULT"},
         title: {type: String, required: true},
-        rating: {type: Number, default: 0},
+        rating: {type: Number, default: 5},
         results: [ResultSchema],
-        questions: [OptionsSchema],
+        questions: [QuestionSchema],
         comments: [CommentSchema]
+    }, {
+        timestamps: true,
+        versionKey: false
     }
 );
-TestSchema.plugin(paginate);
-TestSchema.plugin(searchplugin, {
-    fields: ['user', 'description', 'category']
-});
-TestSchema.index({ user:'text', rating:'text', category:'text'});
-TestSchema.path('questions').validate(function(value, done){
-    console.log('--Intentaré validar');
+TestSchema.plugin(sanitizerPlugin);
 
-    var q;
-    for (var i=0; i < this.questions.length; i++){
-        q = this.questions[i];
-        for (var j=0; j< q.options.length; j++){
-            console.log(q.options[j].id_result+'>'+this.results.length);
-            if (q.options[j].id_result>this.results.length) {
-                console.log('Validado mal');
-                done(false);
-                //this.invalidate();
-                //return false;
-                //next(Error('id_result must be lower than results.lenght'));
-            }
-        }
-    }
-    console.log('Validado bien');
-    done(true);
-})
+// TestSchema.plugin(paginate);
+// TestSchema.plugin(searchplugin, {
+//     fields: ['user', 'description', 'category']
+// });
+// TestSchema.index({ user:'text', rating:'text', category:'text'});
 
+// TestSchema.path('questions').validate(function(value, done){
+//     console.log('--Intentaré validar');
+//
+//     var q;
+//     for (var i=0; i < this.questions.length; i++){
+//         q = this.questions[i];
+//         for (var j=0; j< q.options.length; j++){
+//             console.log(q.options[j].id_result+'>'+this.results.length);
+//             if (q.options[j].id_result>this.results.length) {
+//                 console.log('Validado mal');
+//                 done(false);
+//                 //this.invalidate();
+//                 //return false;
+//                 //next(Error('id_result must be lower than results.lenght'));
+//             }
+//         }
+//     }
+//     console.log('Validado bien');
+//     done(true);
+// })
 
 //TestSchema.pre('validate', function(next){
 //    //console.log("post validate called");

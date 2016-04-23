@@ -1,82 +1,99 @@
 /**
- * Created by snooze on 4/23/16.
+ * Created by snooze on 4/20/16.
  */
 
 var express = require('express');
-var router = express.Router();
-var http = require('http');
-var url  = require('url');
+var bodyParser = require('body-parser');
 
-//var mongoose = require('mongoose');
-var Test = require('../models/test');
+var Tests = require('../models/test');
 
-/* GET /todos listing. */
-router.get('/', function(req, res, next) {
-    var page = parseInt(req.query.page) || 1
-    var limit = parseInt(req.query.limit) || 4
-    var search = req.query.search || ''
-    var categ = req.query.category || ''
-    var rating = req.query.rating || 0
-    console.log('Página: '+page)
-    console.log('Límite: '+limit)
+var testrouter = express.Router();
+testrouter.use(bodyParser.json());
 
-    if ((search==='') && (categ==='') && (rating==0)){
-        console.log('-- No buscando')
-        Test.paginate({}, { 'page': page, 'limit': limit }, function(err, todos) {
-            if (err) return next(err);
-            res.json(todos);
-        });
-    } else {
-        console.log('Búsqueda: '+search+' - Categoria: '+categ+' - Rating: '+rating)
-        console.log('-- Buscando')
-        var regex = new RegExp(search, 'i');  // 'i' makes it case insensitive
-        var regca = new RegExp(categ, 'i');  // 'i' makes it case insensitive
-        return Test.paginate(
-            {
-                $or: [
-                    {'title': regex, 'category':regca, 'rating': {$gt : rating}},
-                    {'description': regex, 'category':regca, 'rating': {$gt : rating}}
-                ]
-            }
-            , { 'page': page, 'limit': limit }, function(err, todos){
-                return res.send(todos);
+/* GET users listing. */
+testrouter.route('/')
+    .get(function (req, res, next) {
+        console.log('Trying to get test');
+        // Hide comments here
+        Tests.find({},{"comments":0,"questions":0,"results":0})
+            .exec(function (err, noticia) {
+                if (err) {
+                    res.json({
+                        message: err.errors.title.message
+                        // ,error: err
+                    })
+                }
+                res.json(noticia);
             });
-    }
-
-});
-
-/* POST /todos */
-router.post('/', function(req, res, next) {
-    Test.create(req.body, function (err, post) {
-        //if (err) return next(err);
-        if (err) return res.json(0);
-        res.json(post);
+    })
+    .post(function (req, res, next) {
+        console.log('Trying to post a new test');
+        Tests.create(req.body, function (err, noticia) {
+            if (err) {
+                res.json({
+                    message: err.errors.title.message
+                    // ,error: err
+                })
+            }
+            console.log('New created!');
+            res.json(noticia);
+        });
+    })
+    .delete(function (req, res, next) {
+        console.log('Trying to delete all test');
+        Tests.remove({}, function (err, noticia) {
+            if (err) {
+                res.json({
+                    message: err.errors.title.message
+                    // ,error: err
+                })
+            }
+            res.json(noticia);
+        });
     });
-});
 
-/* GET /todos/id */
-router.get('/:id', function(req, res, next) {
-    Test.findById(req.params.id, function (err, post) {
-        if (err) return next(err);
-        res.json(post);
+testrouter.route('/:testId')
+    .get(function (req, res, next) {
+        Tests.findById(req.params.testId)
+            .populate('comments.postedBy')
+            .exec(function (err, dish) {
+                if (err) {
+                    res.json({
+                        message: err.errors.title.message
+                        // ,error: err
+                    })
+                }
+                res.json(dish);
+            });
+    })
+
+    .put(function (req, res, next) {
+        Tests.findByIdAndUpdate(req.params.testId, {
+            $set: req.body
+        }, {
+            new: true
+        }, function (err, dish) {
+            if (err) {
+                res.json({
+                    message: err.errors.title.message
+                    // ,error: err
+                })
+            }
+            res.json(dish);
+        });
+    })
+
+    .delete(function (req, res, next) {
+        Tests.findByIdAndRemove(req.params.testId, function (err, resp) {
+            if (err) {
+                res.json({
+                    message: err.errors.title.message
+                    // ,error: err
+                })
+            }
+            res.json(resp);
+        });
     });
-});
 
-/* PUT /todos/:id */
-router.put('/:id', function(req, res, next) {
-    Test.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
-        //if (err) return next(err);
-        if (err) return res.json(0);
-        res.json(post);
-    });
-});
 
-/* DELETE /todos/:id */
-router.delete('/:id', function(req, res, next) {
-    Test.findByIdAndRemove(req.params.id, req.body, function (err, post) {
-        if (err) return next(err);
-        res.json(post);
-    });
-});
-
-module.exports = router;
+module.exports = testrouter;
