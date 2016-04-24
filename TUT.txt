@@ -2,7 +2,8 @@ npm install mongoose --save
 npm install mongoose-sanitizer --save
 npm install mongoose-paginate --save
 npm install mongoose-search-plugin --save
-
+npm install passport passport-local passport-local-mongoose passport-facebook --save
+npm install jsonwebtoken --save
 
 # RUN
 mongod --dbpath database
