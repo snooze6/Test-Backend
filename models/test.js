@@ -107,9 +107,29 @@ var TestSchema = new Schema(
         category: {type: String, default: "None"},
         title: {type: String, required: true},
         rating: {type: Number, default: 5},
-        results: [ResultSchema],
-        questions: [QuestionSchema],
-        comments: [CommentSchema]
+        results: { type: [ResultSchema] },
+        questions: { type: [QuestionSchema],
+            validate: {
+                validator: function (v) {
+                    console.log('-- Trying to validate');
+                    var lres = this.results.length;
+                    for (var w in v) {
+                        // console.log("Cuantos resultados tiene: "+lres);
+                        // console.log("Cuantas opciones tiene: "+v[w].options.length);
+                        for (var j in v[w].options) {;
+                            var aux = v[w].options[j].result;
+                            if (aux < 0 || aux > (lres - 1)) {
+                                // console.log('Invalid');
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                },
+                message: 'Please input a valid result'
+            }
+        },
+        comments: { type: [CommentSchema] }
     }, {
         timestamps: true,
         versionKey: false

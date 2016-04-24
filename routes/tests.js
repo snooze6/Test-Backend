@@ -18,51 +18,45 @@ function lastcomment(obj){
     return obj[obj.length-1];
 }
 
-function showError(res, err) {
-    res.json({
-        message: first(err.errors).message
-        // ,error: err
-    });
-
-    // if (err.message) {
-    //     res.json({message: err.message});
-    // } else {
-    //     res.json({
-    //         message: first(err.errors).message
-    //         // ,error: err
-    //     })
-    // }
+function showError(res, err, next) {
+    res.status(403).json(
+        {
+            message: first(err.errors).message
+            ,error: err
+        }
+    );
+    // next(err);
 }
 
 // TEST LISTS ------------------------------------------------------------------
 testrouter.route('/')
     .get(function (req, res, next) {
-        console.log('-- Trying to get test');
+        // console.log('-- Trying to get test');
         // Hide comments here
         Tests.find({},{"comments":0,"questions":0,"results":0})
             .exec(function (err, auxtest) {
                 if (err) {
-                    showError(res, err);
+                    showError(res, err, next);
                 } else {
                     res.json(auxtest);
                 }
             });
     })
     .post(function (req, res, next) {
-        console.log('-- Trying to post a new test');
+        // console.log('-- Trying to post a new test');
         Tests.create(req.body, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest);
             }
         });
     })
     .delete(function (req, res, next) {
-        console.log('-- Trying to delete all test');
+        // console.log('-- Trying to delete all test');
         Tests.remove({}, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             }
             res.json(auxtest);
         });
@@ -71,35 +65,35 @@ testrouter.route('/')
 // TEST INDIVIDUAL -------------------------------------------------------------
 testrouter.route('/:testId')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test');
+        // console.log('-- Trying to get '+req.params.testId+' test');
         Tests.findById(req.params.testId)
             .exec(function (err, auxtest) {
                 if (err) {
-                    showError(res, err);
+                    showError(res, err, next);
                 } else {
                     res.json(auxtest);
                 }
             });
     })
     .put(function (req, res, next) {
-        console.log('-- Trying to update '+req.params.testId+' test');
+        // console.log('-- Trying to update '+req.params.testId+' test');
         Tests.findByIdAndUpdate(req.params.testId, {
             $set: req.body
         }, {
             new: true
         }, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest);
             }
         });
     })
     .delete(function (req, res, next) {
-        console.log('-- Trying to delete '+req.params.testId+' test');
+        // console.log('-- Trying to delete '+req.params.testId+' test');
         Tests.findByIdAndRemove(req.params.testId, function (err, resp) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(resp);
             }
@@ -112,25 +106,25 @@ testrouter.route('/:testId')
 // TESTS COMMENTS --------------------------------------------------------------
 testrouter.route('/:testId/comments')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test comments');
+        // console.log('-- Trying to get '+req.params.testId+' test comments');
         Tests.findById(req.params.testId,{"questions":0,"results":0}, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest.comments);
             }
         });
     })
     .post(function (req, res, next) {
-        console.log('-- Trying to post '+req.params.testId+' test a new comment');
+        // console.log('-- Trying to post '+req.params.testId+' test a new comment');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 auxtest.comments.push(req.body);
                 auxtest.save(function (err, auxtest) {
                     if (err) {
-                        showError(res, err);
+                        showError(res, err, next);
                     } else {
                         res.json(lastcomment(auxtest.comments));
                     }
@@ -139,23 +133,19 @@ testrouter.route('/:testId/comments')
         });
     })
     .delete(function (req, res, next) {
-        console.log('-- Trying to delete all '+req.params.testId+' test comments');
+        // console.log('-- Trying to delete all '+req.params.testId+' test comments');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 for (var i = (auxtest.comments.length - 1); i >= 0; i--) {
                     auxtest.comments.id(auxtest.comments[i]._id).remove();
                 }
                 auxtest.save(function (err, result) {
                     if (err) {
-                        showError(res, err);
+                        showError(res, err, next);
                     } else {
                         res.json(result.comments);
-                        // res.writeHead(200, {
-                        //     'Content-Type': 'text/plain'
-                        // });
-                        // res.end('Deleted all comments!');
                     }
                 });
             }
@@ -164,10 +154,10 @@ testrouter.route('/:testId/comments')
 
 testrouter.route('/:testId/comments/:commentId')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.CommentId);
+        // console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.CommentId);
         Tests.findById(req.params.testId,{"questions":0,"results":0}, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest.comments.id(req.params.commentId));
             }
@@ -179,7 +169,7 @@ testrouter.route('/:testId/comments/:commentId')
     //     // comment as a new comment
     //     Tests.findById(req.params.testId, function (err, auxtest) {
     //         if (err) {
-    //             showError(res, err);
+    //             showError(res, err, next);
     //         } else {
     //             auxtest.comments.id(req.params.commentId).remove();
     //             req.body.postedBy = req.decoded._doc._id;
@@ -203,13 +193,13 @@ testrouter.route('/:testId/comments/:commentId')
             //     != req.decoded._doc._id) {
             //     var err = new Error('You are not authorized to perform this operation!');
             //     err.status = 403;
-            //     showError(res, err);
+            //     showError(res, err, next);
             //     // return next(err);
             // }
             auxtest.comments.id(req.params.commentId).remove();
             auxtest.save(function (err, resp) {
                 if (err) {
-                    showError(res, err);
+                    showError(res, err, next);
                 } else {
                     res.json(resp.comments);
                 }
@@ -221,25 +211,25 @@ testrouter.route('/:testId/comments/:commentId')
 // TESTS RESULTS --------------------------------------------------------------
 testrouter.route('/:testId/results')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test results');
+        // console.log('-- Trying to get '+req.params.testId+' test results');
         Tests.findById(req.params.testId,{"questions":0,"comments":0},  function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest.results);
             }
         });
     })
     .post(function (req, res, next) {
-        console.log('-- Trying to post '+req.params.testId+' test a new result');
+        // console.log('-- Trying to post '+req.params.testId+' test a new result');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 auxtest.results.push(req.body);
                 auxtest.save(function (err, auxtest) {
                     if (err) {
-                        showError(res, err);
+                        showError(res, err, next);
                     } else {
                         res.json(lastcomment(auxtest.results));
                     }
@@ -248,17 +238,17 @@ testrouter.route('/:testId/results')
         });
     })
     .delete(function (req, res, next) {
-        console.log('-- Trying to delete all '+req.params.testId+' test results');
+        // console.log('-- Trying to delete all '+req.params.testId+' test results');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 for (var i = (auxtest.results.length - 1); i >= 0; i--) {
                     auxtest.results.id(auxtest.results[i]._id).remove();
                 }
                 auxtest.save(function (err, result) {
                     if (err) {
-                        showError(res, err);
+                        showError(res, err, next);
                     } else {
                         res.json(result.results);
                     }
@@ -269,10 +259,10 @@ testrouter.route('/:testId/results')
 
 testrouter.route('/:testId/results/:resultId')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.resultId);
+        // console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.resultId);
         Tests.findById(req.params.testId, {"questions":0,"comments":0}, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest.results.id(req.params.resultId));
             }
@@ -284,7 +274,7 @@ testrouter.route('/:testId/results/:resultId')
     //     // comment as a new comment
     //     Tests.findById(req.params.testId, function (err, auxtest) {
     //         if (err) {
-    //             showError(res, err);
+    //             showError(res, err, next);
     //         } else {
     //             auxtest.results.id(req.params.resultId).remove();
     //             req.body.postedBy = req.decoded._doc._id;
@@ -308,13 +298,13 @@ testrouter.route('/:testId/results/:resultId')
             //     != req.decoded._doc._id) {
             //     var err = new Error('You are not authorized to perform this operation!');
             //     err.status = 403;
-            //     showError(res, err);
+            //     showError(res, err, next);
             //     // return next(err);
             // }
             auxtest.results.id(req.params.resultId).remove();
             auxtest.save(function (err, resp) {
                 if (err) {
-                    showError(res, err);
+                    showError(res, err, next);
                 } else {
                     res.json(resp.results);
                 }
@@ -326,28 +316,25 @@ testrouter.route('/:testId/results/:resultId')
 // TESTS questions --------------------------------------------------------------
 testrouter.route('/:testId/questions')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test questions');
+        // console.log('-- Trying to get '+req.params.testId+' test questions');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest.questions);
             }
         });
     })
     .post(function (req, res, next) {
-        console.log('-- Trying to post '+req.params.testId+' test a new comment');
+        // console.log('-- Trying to post '+req.params.testId+' test a new comment');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
-                console.log("Cuantos resultados tiene: "+auxtest.results.length);
-                console.log(req.body);
-
                 auxtest.questions.push(req.body);
                 auxtest.save(function (err, auxtest) {
                     if (err) {
-                        showError(res, err);
+                        showError(res, err, next);
                     } else {
                         res.json(lastcomment(auxtest.questions));
                     }
@@ -356,17 +343,17 @@ testrouter.route('/:testId/questions')
         });
     })
     .delete(function (req, res, next) {
-        console.log('-- Trying to delete all '+req.params.testId+' test questions');
+        // console.log('-- Trying to delete all '+req.params.testId+' test questions');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 for (var i = (auxtest.questions.length - 1); i >= 0; i--) {
                     auxtest.questions.id(auxtest.questions[i]._id).remove();
                 }
                 auxtest.save(function (err, result) {
                     if (err) {
-                        showError(res, err);
+                        showError(res, err, next);
                     } else {
                         res.json(result.questions);
                         // res.writeHead(200, {
@@ -381,10 +368,10 @@ testrouter.route('/:testId/questions')
 
 testrouter.route('/:testId/questions/:commentId')
     .get(function (req, res, next) {
-        console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.CommentId);
+        // console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.CommentId);
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
-                showError(res, err);
+                showError(res, err, next);
             } else {
                 res.json(auxtest.questions.id(req.params.commentId));
             }
@@ -396,7 +383,7 @@ testrouter.route('/:testId/questions/:commentId')
     //     // comment as a new comment
     //     Tests.findById(req.params.testId, function (err, auxtest) {
     //         if (err) {
-    //             showError(res, err);
+    //             showError(res, err, next);
     //         } else {
     //             auxtest.questions.id(req.params.commentId).remove();
     //             req.body.postedBy = req.decoded._doc._id;
@@ -420,13 +407,13 @@ testrouter.route('/:testId/questions/:commentId')
             //     != req.decoded._doc._id) {
             //     var err = new Error('You are not authorized to perform this operation!');
             //     err.status = 403;
-            //     showError(res, err);
+            //     showError(res, err, next);
             //     // return next(err);
             // }
             auxtest.questions.id(req.params.commentId).remove();
             auxtest.save(function (err, resp) {
                 if (err) {
-                    showError(res, err);
+                    showError(res, err, next);
                 } else {
                     res.json(resp.questions);
                 }
