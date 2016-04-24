@@ -8,13 +8,17 @@ npm install mongoose-search-plugin --save
 mongod --dbpath database
 
 # TODO
-- Save and Access tests
-- Paginate in listin
-- Access individual tests
+- Paginate in listings
+- Be able to filter
 - Access individual comments
+- Access individual options
+- Control options.length
+- Access individual results
 - Facebook integration
   - Really needed
-- Make sure that images are images
+- Front end (Needs to be pretty)
+  - Angularize
+
 
 # DONE
 - [DONE] Extract variables to config for easier deployment
@@ -23,3 +27,6 @@ mongod --dbpath database
   mongoose-sanitizer
 - [DONE] Don't bring comments in listing
   parameters in find({filters},{excludes})
+- [DONE] Access individual tests
+- [DONE] Save and Access tests
+- [DONE] Make sure that images are images

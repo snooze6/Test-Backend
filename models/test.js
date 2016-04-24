@@ -16,7 +16,14 @@ function validateimage (url) {
 var ResultSchema = new mongoose.Schema(
     {
         description: { type: String, required:true },
-        image: String,
+        image: {
+            type: String,
+            required: true,
+            validate: {
+                validator: validateimage,
+                message: 'Please input a valid image link'
+            }
+        },
         title: { type: String, required: true }
     }, {
         versionKey: false
@@ -28,7 +35,14 @@ var OptionsSchema = new Schema(
     {
         result: { type: Number, min: 0, required:true },
         title: { type: String, required: true},
-        image: String
+        image: {
+            type: String,
+            required: true,
+            validate: {
+                validator: validateimage,
+                message: 'Please input a valid image link'
+            }
+        },
     }, {
         versionKey: false
     }
@@ -38,7 +52,14 @@ OptionsSchema.plugin(sanitizerPlugin);
 var QuestionSchema = new Schema(
     {
         question: { type: String, required:true},
-        image: String,
+        image: {
+            type: String,
+            required: true,
+            validate: {
+                validator: validateimage,
+                message: 'Please input a valid image link'
+            }
+        },
         options: [OptionsSchema]
     }, {
         versionKey: false
