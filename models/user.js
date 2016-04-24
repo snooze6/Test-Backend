@@ -4,6 +4,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
+var sanitizerPlugin = require('mongoose-sanitizer');
 
 
 var User = new Schema({
@@ -24,6 +25,7 @@ var User = new Schema({
         default: false
     }
 });
+User.plugin(sanitizerPlugin);
 
 User.methods.getName = function() {
     return (this.firstname + ' ' + this.lastname);

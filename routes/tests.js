@@ -4,6 +4,7 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+require('mongoose-query-paginate');
 
 var Tests = require('../models/test');
 
@@ -28,38 +29,33 @@ function showError(res, err, next) {
     // next(err);
 }
 
-function parseArguments(req, limit, page) {
+function parseArguments(req) {
+    var page = 1;
+    var limit = 10;
+    var search = new RegExp(req.query.search, 'i');
+    var rating = req.query.rating || 0;
     if ((parseInt(req.query.limit) > 0 ) && (parseInt(req.query.limit) < 31 )) {
         limit = parseInt(req.query.limit);
     }
     if (parseInt(req.query.page) > 0) {
         page = parseInt(req.query.page) > 0
     }
-    return {limit: limit, page: page};
+    return {limit: limit, page: page, search: search, rating: rating};
 }
 
 // TEST LISTS ------------------------------------------------------------------
 testrouter.route('/')
     .get(function (req, res, next) {
         // console.log('-- Trying to get test');
-        var page = 1;
-        var limit = 10;
-        var __ret = parseArguments(req, limit, page);
-        limit = __ret.limit;
-        page = __ret.page;
-        Tests.paginate({},
-            {
-                select: 'title description image rating category postedBy',
-                page: page,
-                limit: limit
-            }, function(err, auxtest) {
+        var ret = parseArguments(req);
+
+        Tests.paginate({'_keywords': ret.search, 'rating': {$gt : ret.rating}}, {select: 'title description image rating category postedBy', 'page': ret.page, 'limit': ret.limit}, function (err, auxtest){
             if (err) {
                 showError(res, err, next);
             } else {
                 res.json(auxtest);
             }
         });
-
     })
     .post(function (req, res, next) {
         // console.log('-- Trying to post a new test');
@@ -130,7 +126,11 @@ testrouter.route('/:testId/comments')
             if (err) {
                 showError(res, err, next);
             } else {
-                res.json(auxtest.comments);
+                if (auxtest) {
+                    res.json(auxtest.comments);
+                } else {
+                    res.status(404).json({message: 'Not found'});
+                }
             }
         });
     })
@@ -235,7 +235,11 @@ testrouter.route('/:testId/results')
             if (err) {
                 showError(res, err, next);
             } else {
-                res.json(auxtest.results);
+                if (auxtest) {
+                    res.json(auxtest.results);
+                } else {
+                    res.status(404).json({message: 'Not found'});
+                }
             }
         });
     })

@@ -14,6 +14,7 @@
     "jsonwebtoken": "^5.7.0",
     "mongoose": "^4.4.13",
     "mongoose-paginate": "^5.0.0",
+    "mongoose-query-paginate": "^1.0.1",
     "mongoose-sanitizer": "^1.0.0",
     "mongoose-search-plugin": "^0.1.2",
     "morgan": "~1.6.1",

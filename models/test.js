@@ -4,7 +4,7 @@
 
 var mongoose = require('mongoose');
 var paginate = require('mongoose-paginate');
-// var searchplugin = require('mongoose-search-plugin');
+var searchplugin = require('mongoose-search-plugin');
 // var autoincrement = require('mongoose-auto-increment');
 var sanitizerPlugin = require('mongoose-sanitizer');
 var Schema = mongoose.Schema;
@@ -137,58 +137,10 @@ var TestSchema = new Schema(
 );
 TestSchema.plugin(sanitizerPlugin);
 TestSchema.plugin(paginate);
-
-// TestSchema.plugin(searchplugin, {
-//     fields: ['user', 'description', 'category']
-// });
+// TODO: Add user to search
+TestSchema.plugin(searchplugin, {
+    fields: [ 'title', 'description', 'category', 'category']
+});
 // TestSchema.index({ user:'text', rating:'text', category:'text'});
-
-// TestSchema.path('questions').validate(function(value, done){
-//     console.log('--Intentaré validar');
-//
-//     var q;
-//     for (var i=0; i < this.questions.length; i++){
-//         q = this.questions[i];
-//         for (var j=0; j< q.options.length; j++){
-//             console.log(q.options[j].id_result+'>'+this.results.length);
-//             if (q.options[j].id_result>this.results.length) {
-//                 console.log('Validado mal');
-//                 done(false);
-//                 //this.invalidate();
-//                 //return false;
-//                 //next(Error('id_result must be lower than results.lenght'));
-//             }
-//         }
-//     }
-//     console.log('Validado bien');
-//     done(true);
-// })
-
-//TestSchema.pre('validate', function(next){
-//    //console.log("post validate called");
-//    //next();
-//    console.log('--Intentaré validar');
-//    var q
-//    for (var i=0; i < this.questions.length; i++){
-//        q = this.questions[i];
-//        for (var j=0; j< q.options.length; j++){
-//            console.log(q.options[j].id_result+'>'+this.results.length);
-//            if (q.options[j].id_result>this.results.length) {
-//                console.log('Validado mal');
-//                //this.invalidate();
-//                //return false;
-//                next(Error('id_result must be lower than results.lenght'));
-//            }
-//        }
-//    }
-//    console.log('Validado bien');
-//    return true;
-//    //next();
-//})
-//if (global.autoincrement) {
-//    console.log('autoincrement added to plugins')
-//    TestSchema.plugin(global.autoincrement.plugin, 'Test')
-//}
-//schema.index({ animal: 'text', color: 'text', pattern: 'text', size: 'text' });
 
 module.exports = mongoose.model('Test', TestSchema);

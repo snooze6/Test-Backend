@@ -1,9 +1,12 @@
 npm install mongoose --save
 npm install mongoose-sanitizer --save
-npm install mongoose-paginate --save
+# npm install mongoose-paginate --save
 npm install mongoose-search-plugin --save
 npm install passport passport-local passport-local-mongoose passport-facebook --save
 npm install jsonwebtoken --save
+npm install mongoose-search-plugin --save
+
+npm install mongoose-query-paginate --save
 
 # RUN
 mongod --dbpath database
@@ -20,7 +23,7 @@ mongod --dbpath database
 - Is susceptible for mongoinyection?
 - Catching errors?
 - Invalidating token?
-- Sanitize user
+- [DONE] Sanitize user
 - Infinite results?
 
 # TODO far away
