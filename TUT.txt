@@ -10,14 +10,19 @@ mongod --dbpath database
 # TODO
 - Paginate in listings
 - Be able to filter
-- Access individual comments
 - Access individual options
+  - Validate that the number is less than the number of results
 - Control options.length
 - Access individual results
 - Facebook integration
   - Really needed
 - Front end (Needs to be pretty)
   - Angularize
+- Is susceptible for mongoinyection?
+
+# TODO far away
+- Don't bring all comments to push a new one
+- Same with cuestions
 
 
 # DONE
@@ -30,3 +35,4 @@ mongod --dbpath database
 - [DONE] Access individual tests
 - [DONE] Save and Access tests
 - [DONE] Make sure that images are images
+- [DONE] Access individual results

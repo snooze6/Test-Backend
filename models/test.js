@@ -43,6 +43,7 @@ var OptionsSchema = new Schema(
                 message: 'Please input a valid image link'
             }
         },
+        description: {type: String}
     }, {
         versionKey: false
     }
@@ -60,7 +61,7 @@ var QuestionSchema = new Schema(
                 message: 'Please input a valid image link'
             }
         },
-        options: [OptionsSchema]
+        options: { type: [OptionsSchema], required: true }
     }, {
         versionKey: false
     }
@@ -115,8 +116,8 @@ var TestSchema = new Schema(
     }
 );
 TestSchema.plugin(sanitizerPlugin);
+//TestSchema.plugin(paginate);
 
-// TestSchema.plugin(paginate);
 // TestSchema.plugin(searchplugin, {
 //     fields: ['user', 'description', 'category']
 // });
