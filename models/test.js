@@ -3,7 +3,7 @@
  */
 
 var mongoose = require('mongoose');
-// var paginate = require('mongoose-paginate');
+var paginate = require('mongoose-paginate');
 // var searchplugin = require('mongoose-search-plugin');
 // var autoincrement = require('mongoose-auto-increment');
 var sanitizerPlugin = require('mongoose-sanitizer');
@@ -136,7 +136,7 @@ var TestSchema = new Schema(
     }
 );
 TestSchema.plugin(sanitizerPlugin);
-//TestSchema.plugin(paginate);
+TestSchema.plugin(paginate);
 
 // TestSchema.plugin(searchplugin, {
 //     fields: ['user', 'description', 'category']

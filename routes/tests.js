@@ -28,19 +28,38 @@ function showError(res, err, next) {
     // next(err);
 }
 
+function parseArguments(req, limit, page) {
+    if ((parseInt(req.query.limit) > 0 ) && (parseInt(req.query.limit) < 31 )) {
+        limit = parseInt(req.query.limit);
+    }
+    if (parseInt(req.query.page) > 0) {
+        page = parseInt(req.query.page) > 0
+    }
+    return {limit: limit, page: page};
+}
+
 // TEST LISTS ------------------------------------------------------------------
 testrouter.route('/')
     .get(function (req, res, next) {
         // console.log('-- Trying to get test');
-        // Hide comments here
-        Tests.find({},{"comments":0,"questions":0,"results":0})
-            .exec(function (err, auxtest) {
-                if (err) {
-                    showError(res, err, next);
-                } else {
-                    res.json(auxtest);
-                }
-            });
+        var page = 1;
+        var limit = 10;
+        var __ret = parseArguments(req, limit, page);
+        limit = __ret.limit;
+        page = __ret.page;
+        Tests.paginate({},
+            {
+                select: 'title description image rating category postedBy',
+                page: page,
+                limit: limit
+            }, function(err, auxtest) {
+            if (err) {
+                showError(res, err, next);
+            } else {
+                res.json(auxtest);
+            }
+        });
+
     })
     .post(function (req, res, next) {
         // console.log('-- Trying to post a new test');

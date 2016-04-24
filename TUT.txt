@@ -10,6 +10,8 @@ mongod --dbpath database
 
 # TODO
 - Paginate in listings
+  - Comments
+  - Questions
 - Be able to filter
 - Facebook integration
   - Really needed
@@ -17,6 +19,9 @@ mongod --dbpath database
   - Angularize
 - Is susceptible for mongoinyection?
 - Catching errors?
+- Invalidating token?
+- Sanitize user
+- Infinite results?
 
 # TODO far away
 - Don't bring all comments to push a new one
