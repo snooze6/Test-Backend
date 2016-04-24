@@ -22,7 +22,16 @@ function showError(res, err) {
     res.json({
         message: first(err.errors).message
         // ,error: err
-    })
+    });
+
+    // if (err.message) {
+    //     res.json({message: err.message});
+    // } else {
+    //     res.json({
+    //         message: first(err.errors).message
+    //         // ,error: err
+    //     })
+    // }
 }
 
 /* GET users listing. */
@@ -63,7 +72,6 @@ testrouter.route('/:testId')
     .get(function (req, res, next) {
         console.log('-- Trying to get '+req.params.testId+' test');
         Tests.findById(req.params.testId)
-            .populate('comments.postedBy')
             .exec(function (err, auxtest) {
                 if (err) {
                     showError(res, err);
@@ -151,7 +159,8 @@ testrouter.route('/:testId/comments')
 
 testrouter.route('/:testId/comments/:commentId')
     .get(function (req, res, next) {
-        Tests.findById(req.params.dishId, function (err, auxtest) {
+        console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.CommentId);
+        Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
                 showError(res, err);
             } else {
@@ -159,32 +168,39 @@ testrouter.route('/:testId/comments/:commentId')
             }
         });
     })
-    .put(function (req, res, next) {
-        // We delete the existing commment and insert the updated
-        // comment as a new comment
-        Tests.findById(req.params.testId, function (err, auxtest) {
-            if (err) {
-                showError(res, err);
-            } else {
-                auxtest.comments.id(req.params.commentId).remove();
-                req.body.postedBy = req.decoded._doc._id;
-                auxtest.comments.push(req.body);
-                auxtest.save(function (err, auxtest) {
-                    if (err) throw err;
-                    console.log('Updated Comments!');
-                    res.json(auxtest);
-                });
-            }
-        });
-    })
+    // .put(function (req, res, next) {
+    //     console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.CommentId);
+    //     // We delete the existing commment and insert the updated
+    //     // comment as a new comment
+    //     Tests.findById(req.params.testId, function (err, auxtest) {
+    //         if (err) {
+    //             showError(res, err);
+    //         } else {
+    //             auxtest.comments.id(req.params.commentId).remove();
+    //             req.body.postedBy = req.decoded._doc._id;
+    //             // req.body.postedBy = req.decoded._doc._id;
+    //             auxtest.comments.push(req.body);
+    //             auxtest.save(function (err, auxtest) {
+    //                 if (err){
+    //                     console.log(err);
+    //                     showError()
+    //                 } else {
+    //                     console.log('Updated Comments!');
+    //                     res.json(lastcomment(auxtest.comments));
+    //                 }
+    //             });
+    //         }
+    //     });
+    // })
     .delete(function (req, res, next) {
         Tests.findById(req.params.testId, function (err, auxtest) {
-            if (auxtest.comments.id(req.params.commentId).postedBy
-                != req.decoded._doc._id) {
-                var err = new Error('You are not authorized to perform this operation!');
-                err.status = 403;
-                return next(err);
-            }
+            // if (auxtest.comments.id(req.params.commentId).postedBy
+            //     != req.decoded._doc._id) {
+            //     var err = new Error('You are not authorized to perform this operation!');
+            //     err.status = 403;
+            //     showError(res, err);
+            //     // return next(err);
+            // }
             auxtest.comments.id(req.params.commentId).remove();
             auxtest.save(function (err, resp) {
                 if (err) {
