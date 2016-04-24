@@ -1,21 +1,16 @@
 npm install mongoose --save
 npm install mongoose-sanitizer --save
-# npm install mongoose-paginate --save
+npm install mongoose-paginate --save
 npm install mongoose-search-plugin --save
 npm install passport passport-local passport-local-mongoose passport-facebook --save
 npm install jsonwebtoken --save
 npm install mongoose-search-plugin --save
-
-npm install mongoose-query-paginate --save
+#npm install mongoose-query-paginate --save
 
 # RUN
 mongod --dbpath database
 
 # TODO
-- Paginate in listings
-  - Comments
-  - Questions
-- Be able to filter
 - Facebook integration
   - Really needed
 - Front end (Needs to be pretty)
@@ -23,12 +18,15 @@ mongod --dbpath database
 - Is susceptible for mongoinyection?
 - Catching errors?
 - Invalidating token?
-- [DONE] Sanitize user
 - Infinite results?
 
 # TODO far away
 - Don't bring all comments to push a new one
 - Same with cuestions
+- Search in comments or in questions or in results
+- Paginate in listings
+  - Comments
+  - Questions
 
 
 # DONE
@@ -45,3 +43,15 @@ mongod --dbpath database
 - [DONE] Access individual options
   - [DONE] Validate that the number is less than the number of results
 - [DONE] Access individual results
+- [DONE] Sanitize user
+- [DONE] Sorting in the list
+- [DONE] Be able to filter
+    Tests.paginate({'_keywords': ret.search,'category': ret.category, 'rating': {$gt : ret.rating}},
+        {select: 'title description image rating category postedBy', 'page': ret.page, 'limit': ret.limit, 'sort': ret.sort},
+        function (err, auxtest){
+        if (err) {
+            showError(res, err, next);
+        } else {
+            res.json(auxtest);
+        }
+    });
