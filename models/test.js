@@ -9,6 +9,10 @@ var mongoose = require('mongoose');
 var sanitizerPlugin = require('mongoose-sanitizer');
 var Schema = mongoose.Schema;
 
+function validateimage (url) {
+    return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+}
+
 var ResultSchema = new mongoose.Schema(
     {
         description: { type: String, required:true },
@@ -43,25 +47,27 @@ var QuestionSchema = new Schema(
 QuestionSchema.plugin(sanitizerPlugin);
 
 
-var CommentSchema = new Schema({
-    rating:  {
-        type: Number,
-        min: 1,
-        max: 5,
-        required: true
-    },
-    comment:  {
-        type: String,
-        required: true
-    },
-    postedBy: {
-        type: String,
-        required: true
+var CommentSchema = new Schema(
+    {
+        rating:  {
+            type: Number,
+            min: 1,
+            max: 5,
+            required: true
+        },
+        comment:  {
+            type: String,
+            required: true
+        },
+        postedBy: {
+            type: String,
+            required: true
+        }
+    }, {
+        timestamps: true,
+        versionKey: false
     }
-}, {
-    timestamps: true,
-    versionKey: false
-});
+);
 CommentSchema.plugin(sanitizerPlugin);
 
 var TestSchema = new Schema(
@@ -70,9 +76,7 @@ var TestSchema = new Schema(
             type: String,
             required: true,
             validate: {
-                validator: function (url) {
-                    return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
-                },
+                validator: validateimage,
                 message: 'Please input a valid image link'
             }
         },
