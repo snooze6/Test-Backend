@@ -11,8 +11,10 @@ npm install mongoose-search-plugin --save
 mongod --dbpath database
 
 # TODO
+- Protect the API
 - Facebook integration
   - Really needed
+
 - Front end (Needs to be pretty)
   - Angularize
 - Is susceptible for mongoinyection?

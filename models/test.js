@@ -111,7 +111,7 @@ var TestSchema = new Schema(
         questions: { type: [QuestionSchema],
             validate: {
                 validator: function (v) {
-                    console.log('-- Trying to validate');
+                    // console.log('-- Trying to validate');
                     var lres = this.results.length;
                     for (var w in v) {
                         // console.log("Cuantos resultados tiene: "+lres);

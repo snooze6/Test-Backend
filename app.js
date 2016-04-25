@@ -4,6 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var authenticate = require('./authenticate');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -34,6 +36,8 @@ console.log('FCLIENT_KEY:  ' + config.facebook.clientID);
 console.log('FCLIENT_SEC:  ' + config.facebook.clientSecret);
 console.log('FCALLBACK:    ' + config.facebook.callbackURL);
 console.log('</STARTING>');
+
+app.use(passport.initialize());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

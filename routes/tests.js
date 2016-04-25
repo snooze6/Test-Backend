@@ -4,7 +4,7 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-//require('mongoose-query-paginate');
+var Verify = require('./verify');
 
 var Tests = require('../models/test');
 
@@ -44,15 +44,12 @@ function parseArguments(req) {
     }
     switch (req.query.sort){
         case 'title': case 'rating':
-            console.log('Positive');
             sort[req.query.sort]=-1;
             break;
         case '-title': case '-rating':
-            console.log('Negative');
             sort[req.query.sort.substr(1)]=1;
             break;
     }
-    console.log(sort);
     return {limit: limit, page: page, search: search, rating: rating, sort: sort, category: category};
 }
 
@@ -72,7 +69,7 @@ testrouter.route('/')
             }
         });
     })
-    .post(function (req, res, next) {
+    .post(Verify.verifyOrdinaryUser, function (req, res, next) {
         // console.log('-- Trying to post a new test');
         Tests.create(req.body, function (err, auxtest) {
             if (err) {
@@ -82,7 +79,7 @@ testrouter.route('/')
             }
         });
     })
-    .delete(function (req, res, next) {
+    .delete(Verify.verifyAdminUser, function (req, res, next) {
         // console.log('-- Trying to delete all test');
         Tests.remove({}, function (err, auxtest) {
             if (err) {
