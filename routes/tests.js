@@ -56,11 +56,29 @@ function parseArguments(req) {
 // TEST LISTS ------------------------------------------------------------------
 testrouter.route('/')
     .get(function (req, res, next) {
-        // console.log('-- Trying to get test');
+        console.log('-- Trying to get tests');
         var ret = parseArguments(req);
 
+        // Tests.find({}, {"comments": 0, "questions": 0, "results": 0})
+        //     .populate('postedBy')
+        //     .exec(function (err, noticia) {
+        //         if (err) {
+        //             res.json({
+        //                 message: err.errors.title.message
+        //                 // ,error: err
+        //             })
+        //         }
+        //         res.json(noticia);
+        //     });
+
         Tests.paginate({'_keywords': ret.search,'category': ret.category, 'rating': {$gt : ret.rating}},
-            {select: 'title description image rating category postedBy', 'page': ret.page, 'limit': ret.limit, 'sort': ret.sort},
+            {
+                //select: 'title description image rating category postedBy',
+                'page': ret.page,
+                'limit': ret.limit,
+                'sort': ret.sort,
+                'populate': 'postedBy'
+            },
             function (err, auxtest){
             if (err) {
                 showError(res, err, next);
@@ -71,6 +89,7 @@ testrouter.route('/')
     })
     .post(Verify.verifyOrdinaryUser, function (req, res, next) {
         // console.log('-- Trying to post a new test');
+        req.body.postedBy = req.decoded._doc._id;
         Tests.create(req.body, function (err, auxtest) {
             if (err) {
                 showError(res, err, next);

@@ -82,7 +82,8 @@ var CommentSchema = new Schema(
             required: true
         },
         postedBy: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
             required: true
         }
     }, {
@@ -102,7 +103,11 @@ var TestSchema = new Schema(
                 message: 'Please input a valid image link'
             }
         },
-        postedBy: {type: String, required: true},
+        postedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
         description: {type: String, required: true},
         category: {type: String, default: "None"},
         title: {type: String, required: true},
@@ -111,15 +116,11 @@ var TestSchema = new Schema(
         questions: { type: [QuestionSchema],
             validate: {
                 validator: function (v) {
-                    // console.log('-- Trying to validate');
                     var lres = this.results.length;
                     for (var w in v) {
-                        // console.log("Cuantos resultados tiene: "+lres);
-                        // console.log("Cuantas opciones tiene: "+v[w].options.length);
-                        for (var j in v[w].options) {;
+                        for (var j in v[w].options) {
                             var aux = v[w].options[j].result;
                             if (aux < 0 || aux > (lres - 1)) {
-                                // console.log('Invalid');
                                 return false;
                             }
                         }
