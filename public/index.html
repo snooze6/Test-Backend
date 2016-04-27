@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="nameApp">
+<html ng-app="Test">
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
@@ -19,10 +19,12 @@
             $(".button-collapse").sideNav();
         });
 
-        var nameApp = angular.module('nameApp', []);
-        nameApp.controller('NameCtrl', function ($scope){
-            $scope.firstName = 'John';
-            $scope.lastName = 'Smith';
+        var nameApp = angular.module('Test', []);
+        nameApp.controller('NameCtrl', function ($scope, $http){
+            $http.get('api/v1/tests').success(function(data){
+                $scope.tests = data.docs;
+                console.log(data)
+            })
         });
     </script>
 
@@ -51,11 +53,9 @@
         <h1>Hello</h1>
 
         <div ng-controller="NameCtrl">
-        First name:<input ng-model="firstName" type="text"/>
-        <br>
-        Last name:<input ng-model="lastName" type="text"/>
-        <br>
-        Hello {{firstName}} {{lastName}}
+            <ul>
+                <li ng-repeat="test in tests">Title: {{test.title}} - Author: {{test.postedBy.username}}</li>
+            </ul>
         </div>
 
     </body>
