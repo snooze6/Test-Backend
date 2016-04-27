@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html ng-app="nameApp">
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
@@ -10,14 +10,20 @@
         <script src="javascripts/jquery-2.2.3.min.js"></script>
         <script src="javascripts/materialize.min.js"></script>
         <script src="javascripts/angular.min.js"></script>
+        <!--<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
 
     <script>
-        $( document ).ready(function(){$(".button-collapse").sideNav();})
-        function NameCtrl($scope){
-            $scope.name='Initialized';
-        }
+        $( document ).ready(function(){
+            $(".button-collapse").sideNav();
+        });
+
+        var nameApp = angular.module('nameApp', []);
+        nameApp.controller('NameCtrl', function ($scope){
+            $scope.firstName = 'John';
+            $scope.lastName = 'Smith';
+        });
     </script>
 
     <body>
@@ -45,8 +51,11 @@
         <h1>Hello</h1>
 
         <div ng-controller="NameCtrl">
-            Name:<input ng-model="name" type="text" />
-            Hello {{name}}
+        First name:<input ng-model="firstName" type="text"/>
+        <br>
+        Last name:<input ng-model="lastName" type="text"/>
+        <br>
+        Hello {{firstName}} {{lastName}}
         </div>
 
     </body>
