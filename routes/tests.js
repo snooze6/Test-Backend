@@ -29,6 +29,10 @@ function showError(res, err, next) {
     // next(err);
 }
 
+function showMsg(res, status, msg){
+    res.status(status).json({message: msg});
+}
+
 function parseArguments(req) {
     var page = 1;
     var limit = 10;
@@ -73,11 +77,11 @@ testrouter.route('/')
 
         Tests.paginate({'_keywords': ret.search,'category': ret.category, 'rating': {$gt : ret.rating}},
             {
-                //select: 'title description image rating category postedBy',
-                'page': ret.page,
-                'limit': ret.limit,
-                'sort': ret.sort,
-                'populate': 'postedBy'
+                select: 'title description image rating category postedBy',
+                page: ret.page,
+                limit: ret.limit,
+                sort: ret.sort,
+                populate: 'postedBy'
             },
             function (err, auxtest){
             if (err) {
@@ -112,6 +116,7 @@ testrouter.route('/')
 testrouter.route('/:testId')
     .get(function (req, res, next) {
         // console.log('-- Trying to get '+req.params.testId+' test');
+        // TODO: No sacar los arrays aquí?
         Tests.findById(req.params.testId)
             .exec(function (err, auxtest) {
                 if (err) {
@@ -121,29 +126,63 @@ testrouter.route('/:testId')
                 }
             });
     })
-    .put(function (req, res, next) {
+    .put(Verify.verifyOrdinaryUser, function (req, res, next) {
         // console.log('-- Trying to update '+req.params.testId+' test');
-        Tests.findByIdAndUpdate(req.params.testId, {
-            $set: req.body
-        }, {
-            new: true
-        }, function (err, auxtest) {
-            if (err) {
-                showError(res, err, next);
-            } else {
-                res.json(auxtest);
-            }
-        });
+        Tests.findById(req.params.testId)
+            .exec(function (err, auxtest) {
+                if (err) {
+                    showError(res, err, next);
+                } else {
+                    if (auxtest) {
+                        // console.log(req.decoded);
+                        // TODO: No sacar los arrays aquí?
+                        if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                            Tests.findByIdAndUpdate(req.params.testId, {
+                                $set: req.body
+                            }, {
+                                new: true
+                            }, function (err, auxtest) {
+                                if (err) {
+                                    showError(res, err, next);
+                                } else {
+                                    res.json(auxtest);
+                                }
+                            });
+                        } else {
+                            showMsg(res, 403, 'No eres el usuario adecuado')
+                        }
+                    } else {
+                        showMsg(res, 404, 'No existe el test')
+                    }
+                }
+            });
     })
-    .delete(function (req, res, next) {
-        // console.log('-- Trying to delete '+req.params.testId+' test');
-        Tests.findByIdAndRemove(req.params.testId, function (err, resp) {
-            if (err) {
-                showError(res, err, next);
-            } else {
-                res.json(resp);
-            }
-        });
+    .delete(Verify.verifyOrdinaryUser, function (req, res, next) {
+        // console.log('-- Trying to update '+req.params.testId+' test');
+        Tests.findById(req.params.testId).exec(function (err, auxtest) {
+                if (err) {
+                    showError(res, err, next);
+                } else {
+                    if (auxtest) {
+                        // console.log(req.decoded);
+                        // TODO: No sacar los arrays aquí?
+                        if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                            // console.log('-- Trying to delete '+req.params.testId+' test');
+                            Tests.findByIdAndRemove(req.params.testId, function (err, resp) {
+                                if (err) {
+                                    showError(res, err, next);
+                                } else {
+                                    res.json(resp);
+                                }
+                            });
+                        } else {
+                            showMsg(res, 403, 'No eres el usuario adecuado')
+                        }
+                    } else {
+                        showMsg(res, 404, 'No existe el test')
+                    }
+                }
+            });
     });
 
 
@@ -153,7 +192,7 @@ testrouter.route('/:testId')
 testrouter.route('/:testId/comments')
     .get(function (req, res, next) {
         // console.log('-- Trying to get '+req.params.testId+' test comments');
-        Tests.findById(req.params.testId,{"questions":0,"results":0}, function (err, auxtest) {
+        Tests.findById(req.params.testId,{"questions":0,"results":0}).populate('comments.postedBy').exec(function (err, auxtest) {
             if (err) {
                 showError(res, err, next);
             } else {
@@ -161,12 +200,13 @@ testrouter.route('/:testId/comments')
             }
         });
     })
-    .post(function (req, res, next) {
+    .post(Verify.verifyOrdinaryUser, function (req, res, next) {
         // console.log('-- Trying to post '+req.params.testId+' test a new comment');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
                 showError(res, err, next);
             } else {
+                req.body.postedBy = req.decoded._doc._id;
                 auxtest.comments.push(req.body);
                 auxtest.save(function (err, auxtest) {
                     if (err) {
@@ -178,7 +218,7 @@ testrouter.route('/:testId/comments')
             }
         });
     })
-    .delete(function (req, res, next) {
+    .delete(Verify.verifyAdminUser, function (req, res, next) {
         // console.log('-- Trying to delete all '+req.params.testId+' test comments');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
@@ -201,7 +241,7 @@ testrouter.route('/:testId/comments')
 testrouter.route('/:testId/comments/:commentId')
     .get(function (req, res, next) {
         // console.log('-- Trying to get '+req.params.testId+' test comment '+req.params.CommentId);
-        Tests.findById(req.params.testId,{"questions":0,"results":0}, function (err, auxtest) {
+        Tests.findById(req.params.testId,{"questions":0,"results":0}).populate('comments.postedBy').exec(function (err, auxtest) {
             if (err) {
                 showError(res, err, next);
             } else {
@@ -209,47 +249,51 @@ testrouter.route('/:testId/comments/:commentId')
             }
         });
     })
-    // .put(function (req, res, next) {
-    //     console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.CommentId);
-    //     // We delete the existing commment and insert the updated
-    //     // comment as a new comment
-    //     Tests.findById(req.params.testId, function (err, auxtest) {
-    //         if (err) {
-    //             showError(res, err, next);
-    //         } else {
-    //             auxtest.comments.id(req.params.commentId).remove();
-    //             req.body.postedBy = req.decoded._doc._id;
-    //             // req.body.postedBy = req.decoded._doc._id;
-    //             auxtest.comments.push(req.body);
-    //             auxtest.save(function (err, auxtest) {
-    //                 if (err){
-    //                     console.log(err);
-    //                     showError()
-    //                 } else {
-    //                     console.log('Updated Comments!');
-    //                     res.json(lastcomment(auxtest.comments));
-    //                 }
-    //             });
-    //         }
-    //     });
-    // })
+    .put(function (req, res, next) {
+        // console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.CommentId);
+        // We delete the existing commment and insert the updated
+        // comment as a new comment
+        Tests.findById(req.params.testId).populate().exec( function (err, auxtest) {
+            if (err) {
+                showError(res, err, next);
+            } else {
+                if (auxtest.comments.id(req.params.commentId).postedBy == req.decoded._doc._id || req.decoded._doc.admin) {
+                    auxtest.comments.id(req.params.commentId).remove();
+                    req.body.postedBy = req.decoded._doc._id;
+                    // req.body.postedBy = req.decoded._doc._id;
+                    auxtest.comments.push(req.body);
+                    auxtest.save(function (err, auxtest) {
+                        if (err) {
+                            showError(err)
+                        } else {
+                            console.log('Updated Comments!');
+                            res.json(lastcomment(auxtest.comments));
+                        }
+                    });
+                } else {
+                    showMsg(res, 403, 'No eres el usuario adecuado')
+                }
+            }
+        });
+    })
     .delete(function (req, res, next) {
         Tests.findById(req.params.testId, function (err, auxtest) {
-            // if (auxtest.comments.id(req.params.commentId).postedBy
-            //     != req.decoded._doc._id) {
-            //     var err = new Error('You are not authorized to perform this operation!');
-            //     err.status = 403;
-            //     showError(res, err, next);
-            //     // return next(err);
-            // }
-            auxtest.comments.id(req.params.commentId).remove();
-            auxtest.save(function (err, resp) {
-                if (err) {
-                    showError(res, err, next);
-                } else {
-                    res.json(resp.comments);
-                }
-            });
+            if (!(auxtest.comments.id(req.params.commentId).postedBy == req.decoded._doc._id || req.decoded._doc.admin)) {
+                // var err = new Error('You are not authorized to perform this operation!');
+                // err.status = 403;
+                // showError(res, err, next);
+                // // return next(err);
+                showMsg(res, 403, 'No eres el usuario adecuado')
+            } else {
+                auxtest.comments.id(req.params.commentId).remove();
+                auxtest.save(function (err, resp) {
+                    if (err) {
+                        showError(res, err, next);
+                    } else {
+                        res.json(resp.comments);
+                    }
+                });
+            }
         });
     });
 
@@ -270,24 +314,32 @@ testrouter.route('/:testId/results')
             }
         });
     })
-    .post(function (req, res, next) {
+    .post(Verify.verifyOrdinaryUser, function (req, res, next) {
         // console.log('-- Trying to post '+req.params.testId+' test a new result');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
                 showError(res, err, next);
             } else {
-                auxtest.results.push(req.body);
-                auxtest.save(function (err, auxtest) {
-                    if (err) {
-                        showError(res, err, next);
+                if (auxtest) {
+                    if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                        auxtest.results.push(req.body);
+                        auxtest.save(function (err, auxtest) {
+                            if (err) {
+                                showError(res, err, next);
+                            } else {
+                                res.json(lastcomment(auxtest.results));
+                            }
+                        });
                     } else {
-                        res.json(lastcomment(auxtest.results));
+                        showMsg(res, 403, 'No eres el usuario adecuado')
                     }
-                });
+                } else {
+                    showMsg(res, 404, 'No existe el test')
+                }
             }
         });
     })
-    .delete(function (req, res, next) {
+    .delete(Verify.verifyAdminUser, function (req, res, next) {
         // console.log('-- Trying to delete all '+req.params.testId+' test results');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
@@ -318,47 +370,56 @@ testrouter.route('/:testId/results/:resultId')
             }
         });
     })
-    // .put(function (req, res, next) {
-    //     console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.resultId);
-    //     // We delete the existing commment and insert the updated
-    //     // comment as a new comment
-    //     Tests.findById(req.params.testId, function (err, auxtest) {
-    //         if (err) {
-    //             showError(res, err, next);
-    //         } else {
-    //             auxtest.results.id(req.params.resultId).remove();
-    //             req.body.postedBy = req.decoded._doc._id;
-    //             // req.body.postedBy = req.decoded._doc._id;
-    //             auxtest.results.push(req.body);
-    //             auxtest.save(function (err, auxtest) {
-    //                 if (err){
-    //                     console.log(err);
-    //                     showError()
-    //                 } else {
-    //                     console.log('Updated Comments!');
-    //                     res.json(lastcomment(auxtest.results));
-    //                 }
-    //             });
-    //         }
-    //     });
-    // })
-    .delete(function (req, res, next) {
+    .put(function (req, res, next) {
+        console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.resultId);
+        // We delete the existing commment and insert the updated
+        // comment as a new comment
         Tests.findById(req.params.testId, function (err, auxtest) {
-            // if (auxtest.results.id(req.params.resultId).postedBy
-            //     != req.decoded._doc._id) {
-            //     var err = new Error('You are not authorized to perform this operation!');
-            //     err.status = 403;
-            //     showError(res, err, next);
-            //     // return next(err);
-            // }
-            auxtest.results.id(req.params.resultId).remove();
-            auxtest.save(function (err, resp) {
-                if (err) {
-                    showError(res, err, next);
+            if (err) {
+                showError(res, err, next);
+            } else {
+                if (auxtest) {
+                    if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                        auxtest.results.id(req.params.resultId).remove();
+                        req.body.postedBy = req.decoded._doc._id;
+                        // req.body.postedBy = req.decoded._doc._id;
+                        auxtest.results.push(req.body);
+                        auxtest.save(function (err, auxtest) {
+                            if (err){
+                                console.log(err);
+                                showError()
+                            } else {
+                                console.log('Updated Comments!');
+                                res.json(lastcomment(auxtest.results));
+                            }
+                        });
+                    } else {
+                        showMsg(res, 403, 'No eres el usuario adecuado')
+                    }
                 } else {
-                    res.json(resp.results);
+                    showMsg(res, 404, 'No existe el test')
                 }
-            });
+            }
+        });
+    })
+    .delete(Verify.verifyOrdinaryUser, function (req, res, next) {
+        Tests.findById(req.params.testId, function (err, auxtest) {
+            if (auxtest) {
+                if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                    auxtest.results.id(req.params.resultId).remove();
+                    auxtest.save(function (err, resp) {
+                        if (err) {
+                            showError(res, err, next);
+                        } else {
+                            res.json(resp.results);
+                        }
+                    });
+                } else {
+                    showMsg(res, 403, 'No eres el usuario adecuado')
+                }
+            } else {
+                showMsg(res, 404, 'No existe el test')
+            }
         });
     });
 
@@ -375,24 +436,32 @@ testrouter.route('/:testId/questions')
             }
         });
     })
-    .post(function (req, res, next) {
+    .post(Verify.verifyOrdinaryUser, function (req, res, next) {
         // console.log('-- Trying to post '+req.params.testId+' test a new comment');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
                 showError(res, err, next);
             } else {
-                auxtest.questions.push(req.body);
-                auxtest.save(function (err, auxtest) {
-                    if (err) {
-                        showError(res, err, next);
+                if (auxtest) {
+                    if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                        auxtest.questions.push(req.body);
+                        auxtest.save(function (err, auxtest) {
+                            if (err) {
+                                showError(res, err, next);
+                            } else {
+                                res.json(lastcomment(auxtest.questions));
+                            }
+                        });
                     } else {
-                        res.json(lastcomment(auxtest.questions));
+                        showMsg(res, 403, 'No eres el usuario adecuado')
                     }
-                });
+                } else {
+                    showMsg(res, 404, 'No existe el test')
+                }
             }
         });
     })
-    .delete(function (req, res, next) {
+    .delete(Verify.verifyAdminUser, function (req, res, next) {
         // console.log('-- Trying to delete all '+req.params.testId+' test questions');
         Tests.findById(req.params.testId, function (err, auxtest) {
             if (err) {
@@ -427,47 +496,57 @@ testrouter.route('/:testId/questions/:commentId')
             }
         });
     })
-    // .put(function (req, res, next) {
-    //     console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.CommentId);
-    //     // We delete the existing commment and insert the updated
-    //     // comment as a new comment
-    //     Tests.findById(req.params.testId, function (err, auxtest) {
-    //         if (err) {
-    //             showError(res, err, next);
-    //         } else {
-    //             auxtest.questions.id(req.params.commentId).remove();
-    //             req.body.postedBy = req.decoded._doc._id;
-    //             // req.body.postedBy = req.decoded._doc._id;
-    //             auxtest.questions.push(req.body);
-    //             auxtest.save(function (err, auxtest) {
-    //                 if (err){
-    //                     console.log(err);
-    //                     showError()
-    //                 } else {
-    //                     console.log('Updated questions!');
-    //                     res.json(lastcomment(auxtest.questions));
-    //                 }
-    //             });
-    //         }
-    //     });
-    // })
-    .delete(function (req, res, next) {
+    .put(Verify.verifyOrdinaryUser, function (req, res, next) {
+        // console.log('-- Trying to put '+req.params.testId+' test comment '+req.params.CommentId);
+        // We delete the existing commment and insert the updated
+        // comment as a new comment
         Tests.findById(req.params.testId, function (err, auxtest) {
-            // if (auxtest.questions.id(req.params.commentId).postedBy
-            //     != req.decoded._doc._id) {
-            //     var err = new Error('You are not authorized to perform this operation!');
-            //     err.status = 403;
-            //     showError(res, err, next);
-            //     // return next(err);
-            // }
-            auxtest.questions.id(req.params.commentId).remove();
-            auxtest.save(function (err, resp) {
-                if (err) {
-                    showError(res, err, next);
+            if (err) {
+                showError(res, err, next);
+            } else {
+                if (auxtest) {
+                    if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                        auxtest.questions.id(req.params.commentId).remove();
+                        req.body.postedBy = req.decoded._doc._id;
+                        // req.body.postedBy = req.decoded._doc._id;
+                        auxtest.questions.push(req.body);
+                        auxtest.save(function (err, auxtest) {
+                            if (err){
+                                console.log(err);
+                                showError()
+                            } else {
+                                console.log('Updated questions!');
+                                res.json(lastcomment(auxtest.questions));
+                            }
+                        });
+                    } else {
+                        showMsg(res, 403, 'No eres el usuario adecuado')
+                    }
                 } else {
-                    res.json(resp.questions);
+                    showMsg(res, 404, 'No existe el test')
                 }
-            });
+            }
+        });
+    })
+    .delete(Verify.verifyOrdinaryUser, function (req, res, next) {
+        Tests.findById(req.params.testId, function (err, auxtest) {
+            if (auxtest) {
+                if (auxtest.postedBy == req.decoded._doc._id || req.decoded._doc.admin){
+                    auxtest.questions.id(req.params.commentId).remove();
+                    auxtest.save(function (err, resp) {
+                        if (err) {
+                            showError(res, err, next);
+                        } else {
+                            res.json(resp.questions);
+                        }
+                    });
+                } else {
+                    showMsg(res, 403, 'No eres el usuario adecuado')
+                }
+            } else {
+                showMsg(res, 404, 'No existe el test')
+            }
+
         });
     });
 
