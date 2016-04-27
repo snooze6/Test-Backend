@@ -11,9 +11,8 @@ npm install mongoose-search-plugin --save
 mongod --dbpath database
 
 # TODO
-- Protect the API
-- Facebook integration
-  - Really needed
+- Modularizar bien la API
+- Testear bien la seguridad
 
 - Front end (Needs to be pretty)
   - Angularize
@@ -57,3 +56,6 @@ mongod --dbpath database
             res.json(auxtest);
         }
     });
+- [DONE] Protect the API
+- [DONE] Facebook integration
+  - Really needed
