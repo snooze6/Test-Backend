@@ -3,15 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
-        <link rel="stylesheet" href="fonts/iconfont/material-icons.css">
+        <link rel="stylesheet" href="vendor/fonts/iconfont/material-icons.css">
 
         <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
-        <link rel="stylesheet" href="stylesheets/materialize.min.css">
-        <script src="javascripts/jquery-2.2.3.min.js"></script>
-        <script src="javascripts/materialize.min.js"></script>
-        <script src="javascripts/angular.min.js"></script>
+        <link rel="stylesheet" href="vendor/stylesheets/materialize.min.css">
+        <script src="vendor/javascripts/jquery-2.2.3.min.js"></script>
+        <script src="vendor/javascripts/materialize.min.js"></script>
+        <script src="vendor/javascripts/angular.min.js"></script>
         <!--<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/listcontroller.js"></script>
+        <script src="scripts/services/apiservice.js"></script>
+        <script src="scripts/values/settings.js"></script>
     </head>
 
     <script>
@@ -19,13 +24,13 @@
             $(".button-collapse").sideNav();
         });
 
-        var nameApp = angular.module('Test', []);
-        nameApp.controller('NameCtrl', function ($scope, $http){
-            $http.get('api/v1/tests').success(function(data){
-                $scope.tests = data.docs;
-                console.log(data)
-            })
-        });
+//        var nameApp = angular.module('Test', []);
+//        nameApp.controller('NameCtrl', function ($scope, $http){
+//            $http.get('api/v1/tests').success(function(data){
+//                $scope.tests = data.docs;
+//                console.log(data)
+//            })
+//        });
     </script>
 
     <body>
@@ -52,10 +57,9 @@
 
         <h1>Hello</h1>
 
-        <div ng-controller="NameCtrl">
-            <ul>
-                <li ng-repeat="test in tests">Title: {{test.title}} - Author: {{test.postedBy.username}}</li>
-            </ul>
+        <!--Content-->
+        <div class="container">
+            <section app-view-segment="1"></section>
         </div>
 
     </body>
