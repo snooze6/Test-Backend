@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="TestApp">
+<html>
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
@@ -14,6 +14,11 @@
         <script src="vendor/javascripts/angular.min.js"></script>
         <script src="vendor/javascripts/angular-route.min.js"></script>
 
+        <script src="scripts/controllers/Controllers.js"></script>
+        <script src="scripts/factories/Factories.js"></script>
+
+        <script src="scripts/app.js"></script>
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
 
@@ -21,61 +26,9 @@
         $( document ).ready(function(){
             $(".button-collapse").sideNav();
         });
-
-        var TestApp = angular.module('TestApp', ['ngRoute']);
-
-        TestApp.config(function($routeProvider) {
-            $routeProvider.
-                when('/', {
-                    templateUrl: 'views/testlist.html',
-                    controller: 'Ctrl_TestList'
-                }).
-                when('/:testId', {
-                    templateUrl: 'views/testdetail.html',
-                    controller: 'Ctrl_TestDetail'
-                }).
-                otherwise({
-                    redirectTo: '/'
-                });
-        });
-
-        TestApp.factory('tests', function($http){
-            return {
-                list: function (callback){
-                    $http({
-                        method: 'GET',
-                        url: 'api/v1/tests',
-                        cache: true
-                    }).success(callback);
-                },
-                find: function(id, callback){
-                    $http({
-                        method: 'GET',
-                        url: 'api/v1/tests/'+id,
-                        cache: true
-                    }).success(callback);
-                }
-            };
-        });
-
-        TestApp.controller('Ctrl_TestList', function ($scope, tests){
-            tests.list(function(tests) {
-                console.log('Listing');
-                $scope.tests = tests.docs;
-            });
-        });
-
-        TestApp.controller('Ctrl_TestDetail', function ($scope, $routeParams, tests){
-            tests.find($routeParams.testId, function(test) {
-                console.log('Getting');
-                console.log(test);
-                $scope.test = test;
-            });
-        });
-
     </script>
 
-    <body>
+    <body ng-app="TestApp">
         <nav>
             <div class="nav-wrapper">
                 <a href="#!" class="brand-logo">Logo</a>
