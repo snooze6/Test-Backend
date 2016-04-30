@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-<html ng-app="Test">
+<html ng-app="TestApp">
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
-        <link rel="stylesheet" href="vendor/fonts/iconfont/material-icons.css">
 
-        <!--<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
+        <!-- css -->
+        <link rel="stylesheet" href="vendor/fonts/iconfont/material-icons.css">
         <link rel="stylesheet" href="vendor/stylesheets/materialize.min.css">
+
+        <!-- vendors -->
         <script src="vendor/javascripts/jquery-2.2.3.min.js"></script>
         <script src="vendor/javascripts/materialize.min.js"></script>
         <script src="vendor/javascripts/angular.min.js"></script>
         <script src="vendor/javascripts/angular-route.min.js"></script>
-        <!--<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <!--<script src="scripts/app.js"></script>-->
-        <script src="scripts/controllers/listcontroller.js"></script>
-        <script src="scripts/services/apiservice.js"></script>
-        <script src="scripts/values/settings.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
 
     <script>
@@ -25,13 +22,57 @@
             $(".button-collapse").sideNav();
         });
 
-//        var nameApp = angular.module('Test', ['listcontroller']);
-//        nameApp.controller('NameCtrl', function ($scope, $http){
-//            $http.get('api/v1/tests').success(function(data){
-//                $scope.tests = data.docs;
-//                console.log(data)
-//            })
-//        });
+        var TestApp = angular.module('TestApp', ['ngRoute']);
+
+        TestApp.config(function($routeProvider) {
+            $routeProvider.
+                when('/', {
+                    templateUrl: 'views/testlist.html',
+                    controller: 'Ctrl_TestList'
+                }).
+                when('/:testId', {
+                    templateUrl: 'views/testdetail.html',
+                    controller: 'Ctrl_TestDetail'
+                }).
+                otherwise({
+                    redirectTo: '/'
+                });
+        });
+
+        TestApp.factory('tests', function($http){
+            return {
+                list: function (callback){
+                    $http({
+                        method: 'GET',
+                        url: 'api/v1/tests',
+                        cache: true
+                    }).success(callback);
+                },
+                find: function(id, callback){
+                    $http({
+                        method: 'GET',
+                        url: 'api/v1/tests/'+id,
+                        cache: true
+                    }).success(callback);
+                }
+            };
+        });
+
+        TestApp.controller('Ctrl_TestList', function ($scope, tests){
+            tests.list(function(tests) {
+                console.log('Listing');
+                $scope.tests = tests.docs;
+            });
+        });
+
+        TestApp.controller('Ctrl_TestDetail', function ($scope, $routeParams, tests){
+            tests.find($routeParams.testId, function(test) {
+                console.log('Getting');
+                console.log(test);
+                $scope.test = test;
+            });
+        });
+
     </script>
 
     <body>
@@ -59,9 +100,7 @@
         <h1>Hello</h1>
 
         <!--Content-->
-        <div class="container">
-            <section app-view-segment="1"></section>
-        </div>
+        <div ng-view></div>
 
     </body>
 </html>

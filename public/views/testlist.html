@@ -1,3 +1,6 @@
 <ul>
-    <li ng-repeat="test in tests">Title: {{test.title}} - Author: {{test.postedBy.username}}</li>
+    <li ng-repeat="test in tests">
+        Title: {{test.title}} - Author: {{test.postedBy.username}}
+        <a href="#{{test._id}}">Link</a>
+    </li>
 </ul>
