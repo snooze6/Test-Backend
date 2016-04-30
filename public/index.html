@@ -10,10 +10,11 @@
         <script src="vendor/javascripts/jquery-2.2.3.min.js"></script>
         <script src="vendor/javascripts/materialize.min.js"></script>
         <script src="vendor/javascripts/angular.min.js"></script>
+        <script src="vendor/javascripts/angular-route.min.js"></script>
         <!--<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.min.js"></script>-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <script src="scripts/app.js"></script>
+        <!--<script src="scripts/app.js"></script>-->
         <script src="scripts/controllers/listcontroller.js"></script>
         <script src="scripts/services/apiservice.js"></script>
         <script src="scripts/values/settings.js"></script>
@@ -24,7 +25,7 @@
             $(".button-collapse").sideNav();
         });
 
-//        var nameApp = angular.module('Test', []);
+//        var nameApp = angular.module('Test', ['listcontroller']);
 //        nameApp.controller('NameCtrl', function ($scope, $http){
 //            $http.get('api/v1/tests').success(function(data){
 //                $scope.tests = data.docs;

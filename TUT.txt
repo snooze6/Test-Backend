@@ -13,9 +13,11 @@ mongod --dbpath database
 # TODO
 - Modularizar bien la API
 - Testear bien la seguridad
-
 - Front end (Needs to be pretty)
   - Angularize
+  - Routers
+  - Separate HTMLs
+  - Service to the JSON requests
 - Is susceptible for mongoinyection?
 - Catching errors?
 - Invalidating token?
@@ -38,7 +40,7 @@ mongod --dbpath database
 - [DONE] Don't bring comments in listing
   parameters in find({filters},{excludes})
 - [DONE] Access individual tests
-- [DONE] Save and Access tests
+- [DONE] Save and Acces   s tests
 - [DONE] Make sure that images are images
 - [DONE] Access individual results
 - [DONE] Access individual options
