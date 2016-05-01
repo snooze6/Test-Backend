@@ -20,13 +20,13 @@ function lastcomment(obj){
 }
 
 function showError(res, err, next) {
-    res.status(403).json(
-        {
-            message: first(err.errors).message
-            ,error: err
-        }
-    );
-    // next(err);
+    // res.status(403).json(
+    //     {
+    //         message: first(err.errors).message
+    //         ,error: err
+    //     }
+    // );
+    next(err);
 }
 
 function showMsg(res, status, msg){

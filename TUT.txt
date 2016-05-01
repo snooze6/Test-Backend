@@ -22,6 +22,7 @@ mongod --dbpath database
 - Catching errors?
 - Invalidating token?
 - Infinite results?
+- Update rating
 
 # TODO far away
 - Don't bring all comments to push a new one

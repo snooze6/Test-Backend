@@ -10,7 +10,11 @@ TestApp.config(function($routeProvider) {
         templateUrl: 'views/testlist.html',
         controller: 'Ctrl_TestList'
     }).
-    when('/:testId', {
+    when('/page/:pageId', {
+        template: '<p>To be implemented</p>',
+        controller: ''
+    }).
+    when('/test/:testId', {
         templateUrl: 'views/testdetail.html',
         controller: 'Ctrl_TestDetail'
     }).
