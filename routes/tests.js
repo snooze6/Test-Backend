@@ -44,7 +44,7 @@ function parseArguments(req) {
         limit = parseInt(req.query.limit);
     }
     if (parseInt(req.query.page) > 0) {
-        page = parseInt(req.query.page) > 0
+        page = parseInt(req.query.page);
     }
     switch (req.query.sort){
         case 'title': case 'rating':
