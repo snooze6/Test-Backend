@@ -1,3 +1,10 @@
+<div class="card" style="height: 64px; margin: 2%">
+    <div class="card-content">
+        <a href="#test/{{test._id}}">More info</a>
+        <a href="#do/{{test._id}}" style="float:right">Do it</a>
+    </div>
+</div>
+
 <div class="row">
     <div class="col s12 m4" ng-repeat="test in tests">
         <div class="card">
@@ -10,7 +17,10 @@
             </div>
             <div class="card-action">
                 <a href="#test/{{test._id}}">More info</a>
-                <a href="#do/{{test._id}}" style="float:right">Do it</a>
+                <a href="#do/{{test._id}}" class="btn-floating btn-large red" style="float:right; top: -16px;">
+                    <!--Do it-->
+                    <i class="large material-icons">mode_edit</i>
+                </a>
             </div>
         </div>
     </div>
