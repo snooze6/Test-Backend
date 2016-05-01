@@ -10,21 +10,24 @@ npm install mongoose-search-plugin --save
 # RUN
 mongod --dbpath database
 
-# TODO
-- Modularizar bien la API
-- Testear bien la seguridad
+# TODO (1st place)
 - Front end (Needs to be pretty)
   - Angularize
   - Routers
   - Separate HTMLs
   - Service to the JSON requests
+- Update rating
+
+# TODO (2nd place)
+- Modularizar bien la API
+- Testear bien la seguridad
 - Is susceptible for mongoinyection?
 - Catching errors?
 - Invalidating token?
 - Infinite results?
-- Update rating
 
-# TODO far away
+
+# TODO (3rd place)
 - Don't bring all comments to push a new one
 - Same with cuestions
 - Search in comments or in questions or in results

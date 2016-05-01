@@ -4,10 +4,12 @@
 
 angular.module('testFactory', []).factory('tests', function($http){
     return {
-        list: function (callback){
+        list: function (callback, l){
+            var limit = l || 15;
+            console.log(limit);
             $http({
                 method: 'GET',
-                url: 'api/v1/tests',
+                url: 'api/v1/tests?limit='+limit,
                 cache: true
             }).success(callback);
         },
