@@ -7,6 +7,7 @@
         <!-- css -->
         <link rel="stylesheet" href="vendor/fonts/iconfont/material-icons.css">
         <link rel="stylesheet" href="vendor/stylesheets/materialize.min.css">
+        <link rel="stylesheet" href="vendor/stylesheets/style.css">
 
         <!-- vendors -->
         <script src="vendor/javascripts/jquery-2.2.3.min.js"></script>
@@ -29,7 +30,23 @@
     </script>
 
     <body ng-app="TestApp">
-        <div class="navbar-fixed" ng-include="'views/nav.html'"></div>
+        <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper">
+                    <a href="#/" class="brand-logo">Logo</a>
+                    <a href="#" data-activates="mobile-demo" class="button-collapse">
+                        <i class="material-icons">menu</i>
+                    </a>
+                    <ul class="right hide-on-med-and-down">
+                        <div ng-include="'views/menu.html'"></div>
+                    </ul>
+                    <ul class="side-nav" id="mobile-demo">
+                        <div ng-include="'views/menu.html'"></div>
+
+                    </ul>
+                </div>
+            </nav>
+        </div>
 
         <!--Content-->
         <div ng-view></div>
