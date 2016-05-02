@@ -18,7 +18,11 @@ TestApp.config(function($routeProvider) {
         templateUrl: 'views/testdetail.html',
         controller: 'Ctrl_TestDetail'
     }).
+    when('/comingsoon', {
+        templateUrl: 'views/todo.html',
+        controller: ''
+    }).
     otherwise({
-        redirectTo: '/'
+        redirectTo: '/comingsoon'
     });
 });
