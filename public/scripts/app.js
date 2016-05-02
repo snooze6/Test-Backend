@@ -18,6 +18,14 @@ TestApp.config(function($routeProvider) {
         templateUrl: 'views/testdetail.html',
         controller: 'Ctrl_TestDetail'
     }).
+    when('/new',{
+        templateUrl: 'views/testnew.html',
+        controller: ''
+    }).
+    when('/login',{
+        templateUrl: 'views/login.html',
+        controller: ''
+    }).
     when('/comingsoon', {
         templateUrl: 'views/todo.html',
         controller: ''

@@ -1,0 +1,109 @@
+<script>
+    var valid=true;
+    function urlExists(url, callback){
+        $.ajax({
+            type: 'HEAD',
+            url: url,
+            success: function(){
+                callback(true, url);
+            },
+            error: function() {
+                callback(false, url);
+            }
+        });
+    }
+    function doit(sucess, imagesrc){
+        if (sucess){
+            if (!(/(jpg|jpeg|gif|png)$/i.test(imagesrc))) {
+                //alert("the file is not an image");
+                imagesrc = './web/images/notfound.png';
+                $('#imagen').val('Not an image');
+            } else {
+            }
+        } else {
+            //alert("There's nothing");
+            imagesrc = './web/images/notfound.png';
+            $('#imagen').val('Invalid link');
+        }
+        $('#productimg').attr('src', imagesrc);
+    }
+    $('document').ready(function(){
+        $('#imagen').focusout(function(){
+            var imagesrc = $('#imagen').val();
+            urlExists(imagesrc, doit);
+        });
+    });
+</script>
+
+<div class="card" style="width:80%; margin:auto; margin-top: 2%; margin-bottom: 2%">
+    <!--<div class="card-image">-->
+        <!--<img src="images/404.jpg">-->
+        <!--<span class="card-title">Page not yet implemented</span>-->
+    <!--</div>-->
+    <div class="card-content">
+        <p align="center"><span class="card-title">Nuevo Test</span></p>
+
+        <form>
+            <div class="row">
+                <div class="col s12">
+                    <div class="row">
+                        <div class="col s6">
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="row">
+                                        <div class="input-field col s6">
+                                            <input id="first_name" type="text" class="validate">
+                                            <label for="first_name">First Name</label>
+                                        </div>
+                                        <div class="input-field col s6">
+                                            <input id="last_name" type="text" class="validate">
+                                            <label for="last_name">Last Name</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input id="disabled" type="text" class="validate">
+                                            <label for="disabled">Disabled</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input id="password" type="password" class="validate">
+                                            <label for="password">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input id="email" type="email" class="validate">
+                                            <label for="email">Email</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col s6">
+                            <div class="row">
+                                <div class="col s12">
+                                    <div class="row">
+                                        <div class="input-field col s12">
+                                            <input id="imagen" type="text" class="validate">
+                                            <label for="imagen">Imagen</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <p><img src="images/404.jpg" id="productimg" style="width:100%"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div class="card-action">
+        <center><a href="#/">Home</a></center>
+
+    </div>
+</div>
