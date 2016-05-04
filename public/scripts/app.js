@@ -18,6 +18,10 @@ TestApp.config(function($routeProvider) {
         templateUrl: 'views/testdetail.html',
         controller: 'Ctrl_TestDetail'
     }).
+    when('/do/:testId', {
+        templateUrl: 'views/testdo.html',
+        controller: 'Ctrl_TestDetail'
+    }).
     when('/new',{
         templateUrl: 'views/testnew.html',
         controller: ''
