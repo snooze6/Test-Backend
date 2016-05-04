@@ -118,6 +118,8 @@ testrouter.route('/:testId')
         // console.log('-- Trying to get '+req.params.testId+' test');
         // TODO: No sacar los arrays aquí?
         Tests.findById(req.params.testId)
+            .populate('postedBy')
+            .populate('comments.postedBy')
             .exec(function (err, auxtest) {
                 if (err) {
                     showError(res, err, next);

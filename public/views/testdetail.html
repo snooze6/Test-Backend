@@ -1,5 +1,30 @@
 <div>
-    Test: {{ test}}
-    Title: {{test.title}} - Author: {{test.postedBy.username}}
-    <a href="#{{test._id}}">Link</a>
+    <div class="row">
+        <div class="col s12 m10 offset-m1">
+            <div class="card">
+                <div class="card-image">
+                    <img ng-src="{{test.image}}">
+                    <!--<span class="card-title">Card Title</span>-->
+                </div>
+                <div class="card-content">
+                    <p><span class="title">Title: </span>{{test.title}}</p>
+                    <p><span class="title">Description: </span>{{test.description}}</p>
+                    <p><span class="title">Category: </span>{{test.category}}</p>
+                    <p><span class="title">Rating: </span>{{test.rating}}</p>
+                    <br>
+                    <p><span class="title">Created at: </span>{{test.createdAt}}</p>
+                    <br>
+
+                    <div ng-include="'views/testparts/testquestions.html'"></div>
+                    <div ng-include="'views/testparts/testresults.html'"></div>
+                    <div ng-include="'views/testparts/testcomments.html'"></div>
+
+
+                </div>
+                <div class="card-action">
+                    <center><a href="#">This is a link</a></center>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

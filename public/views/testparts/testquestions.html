@@ -1,0 +1,12 @@
+<p><span>Preguntas: </span></p>
+<ul class="collection">
+    <li class="collection-item avatar" ng-repeat="quest in test.questions">
+        <img ng-src="{{quest.image}}" alt="" class="circle">
+        <span class="title">{{quest.question}}</span>
+        <div class="collection">
+            <a href="#!" class="collection-item" ng-repeat="answer in quest.options">
+                {{answer.title}}
+            </a>
+        </div>
+    </li>
+</ul>

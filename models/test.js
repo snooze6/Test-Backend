@@ -42,8 +42,8 @@ var OptionsSchema = new Schema(
                 validator: validateimage,
                 message: 'Please input a valid image link'
             }
-        },
-        description: {type: String}
+        }
+        //,description: {type: String}
     }, {
         versionKey: false
     }

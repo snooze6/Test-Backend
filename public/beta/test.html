@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="../vendor/fonts/iconfont/material-icons.css">
+    <link rel="stylesheet" href="../vendor/stylesheets/materialize.min.css">
+    <link rel="stylesheet" href="../vendor/stylesheets/style.css">
+
+    <!-- vendors -->
+    <script src="../vendor/javascripts/jquery-2.2.3.min.js"></script>
+    <script src="../vendor/javascripts/materialize.min.js"></script>
+    <script src="../vendor/javascripts/angular.min.js"></script>
+    <script src="../vendor/javascripts/angular-route.min.js"></script>
+
+    <script src="../scripts/controllers/Controllers.js"></script>
+    <script src="../scripts/factories/Factories.js"></script>
+
+    <script src="../scripts/app.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<script>
+    $(document).ready(function () {
+        $(".button-collapse").sideNav();
+    });
+</script>
+<!--
+    <style>
+        span{
+            font-weight: bold
+        }
+    </style>
+-->
+
+<body ng-app="TestApp">
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper">
+                <a href="#/" class="brand-logo">Logo</a>
+                <a href="#" data-activates="mobile-demo" class="button-collapse">
+                    <i class="material-icons">menu</i>
+                </a>
+                <ul class="right hide-on-med-and-down">
+                    <div ng-include="'views/menu.html'"></div>
+                </ul>
+                <ul class="side-nav" id="mobile-demo">
+                    <div ng-include="'views/menu.html'"></div>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <!--Content-->
+    <div>
+        <div class="row">
+            <div class="col s12 m10 offset-m1">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="../images/sample-1.jpg">
+                        <span class="card-title">Card Title</span>
+                    </div>
+                    <div class="card-content">
+                        <p><span class="title">Title: </span>caca</p>
+                        <p><span class="title">Description: </span>caca</p>
+                        <p><span class="title">Category: </span>caca</p>
+                        <br>
+                        <p><span>Preguntas: </span></p>
+                        <ul class="collection">
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle">folder</i>
+                                <span class="title">Title</span>
+                                <p><span class="title">Description: </span>Lorem Ipsum</p>
+                                <div class="collection">
+                                    <a href="#!" class="collection-item">Alvin</a>
+                                    <a href="#!" class="collection-item">Alvin</a>
+                                    <a href="#!" class="collection-item">Alvin</a>
+                                </div>
+                            </li>
+                        </ul>
+                        <p><span>Resultados: </span></p>
+                        <ul class="collection">
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle">folder</i>
+                                <span class="title">Title</span>
+                                <p><span class="title">Description: </span>Lorem Ipsum</p>
+                            </li>
+                        </ul>
+                        <p><span>Comentarios: </span></p>
+                        <ul class="collection">
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle">folder</i>
+                                <span class="title">User</span>
+                                <p><span class="title">Comment: </span>Lorem Ipsum</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-action">
+                        <a href="#">This is a link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

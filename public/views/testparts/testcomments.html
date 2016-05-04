@@ -1,0 +1,9 @@
+
+<p><span>Comentarios: </span></p>
+<ul class="collection">
+    <li class="collection-item avatar" ng-repeat="comment in test.comments">
+        <i class="material-icons circle">perm_identity</i>
+        <span class="title">{{comment.postedBy.username}}</span>
+        <p>{{comment.comment}}</p>
+    </li>
+</ul>
