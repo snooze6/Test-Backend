@@ -2,7 +2,8 @@ var TestApp = angular.module('TestApp', [
     'ngRoute',
     'testControllers',
     'testFactory',
-    'testSettings']
+    'testSettings',
+    'testDirectives']
 );
 
 TestApp.config(function($routeProvider) {
