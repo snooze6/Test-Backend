@@ -17,7 +17,9 @@ mod.directive('stepper', function() {
     return {
         // can be used as attribute or element
         restrict: 'AE',
-        scope: {},
+        scope: {
+            value: '=ngModel'
+        },
         // which markup this directive generates
         template: '<button ng-click="decrement()">-</button>' +
                   '<div> {{value}} </div>' +
