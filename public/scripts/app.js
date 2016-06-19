@@ -30,7 +30,7 @@ TestApp.config(function($routeProvider) {
     }).
     when('/login',{
         templateUrl: 'views/login.html',
-        controller: ''
+        controller: 'Ctrl_Login'
     }).
     when('/comingsoon', {
         templateUrl: 'views/todo.html',

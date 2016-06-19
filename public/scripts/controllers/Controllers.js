@@ -28,3 +28,9 @@ testControllers.controller('Ctrl_TestDetail', function ($scope, $routeParams, te
         $scope.test = test;
     });
 });
+
+testControllers.controller('Ctrl_Login', function ($scope, $routeParams, tests){
+    $scope.rating = 42;
+    $scope.minRating = 45;
+    $scope.maxRating = 50;
+});
