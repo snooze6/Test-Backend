@@ -21,9 +21,7 @@ mod.directive('stepper', function() {
             min: '=',
             max: '='
         },
-        template: '<button ng-click="decrement()">-</button>' +
-        '<div>{{ value }}</div>' +
-        '<button ng-click="increment()">+</button>',
+        templateUrl: '../../views/forms/stepper.html',
         link: function(scope, iElement, iAttrs, ngModelController) {
             // we can now use our ngModelController builtin methods
             // that do the heavy-lifting for us
